@@ -14,8 +14,29 @@
 // Once all cards are removed from the board, the game is over and the 'Play again' button should be shown
 // Clicking 'Play again' should generate a new, random set of cards on the grid
 
-const App = () => {
-    return <p>Hello, world.</p>;
-  }
-  
-  ReactDOM.render(<App />, document.getElementById('app'));
+import {useState} from "react";
+import {initializeCards} from "./initializeCards.ts";
+import MemoryCard from "./MemoryCard.tsx";
+
+export default function App() {
+
+
+    const [flipCounter, setFlipCounter] = useState(0);
+    const [cards, setCards] = useState([...initializeCards( ), ...initializeCards()]);
+    const [firstNum, setFirstNum] = useState(0);
+    const [initialReveal, setInitialReveal] = useState(false);
+    
+    return (    
+        <>
+        <section className="cardContainer">
+        {cards.map((card, index) => (
+                <MemoryCard key={index} initialReveal={initialReveal} setInitialReveal={setInitialReveal} firstNum={firstNum} setFirstNum={setFirstNum} num={card} cards={cards} setCards={setCards} flipCounter={flipCounter} setFlipCounter={setFlipCounter} />
+            ))}
+        </section>
+
+        
+        </>
+
+    )
+}
+
