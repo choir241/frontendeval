@@ -1,35 +1,15 @@
-export function checkIfMatch({
-  setFirstNum,
-  setInitialReveal,
-  setFlipCounter,
-  firstNum,
-  secondNum,
-  setRevealed,
-  cards,
-  setCards,
-}: {
-  setFirstNum: (firstNum: number) => void;
-  setInitialReveal: (initialReveal: boolean) => void;
-  setFlipCounter: (flipCounter: number) => void;
-  firstNum: number;
-  secondNum: number;
-  setRevealed: (revealed: boolean) => void;
-  cards: number[];
-  setCards: (cards: number[]) => void;
-}) {
-  if (firstNum === secondNum) {
-    setTimeout(() => {
-      cards.splice(cards.indexOf(firstNum), 1);
-      cards.splice(cards.indexOf(secondNum), 1);
-      setCards([...cards]);
-      setFirstNum(0);
-    }, 3000);
-  } else {
-    setTimeout(() => {
-      setRevealed(false);
-      setInitialReveal(false);
-      setFlipCounter(0);
-      setFirstNum(0);
-    }, 3000);
-  }
+export default function checkIfMatch(firstNumber: number, secondNumber: number, cards: React.JSX.Element[], setCards: (cards: React.JSX.Element[]) => void, cardRef: any){
+    const newCards = cards.filter((card, index) => console.log(card));
+    console.log(newCards);
+    if(firstNumber === secondNumber){
+        console.log('they match ' + firstNumber + " " + secondNumber)
+        console.log(cardRef.current)
+        const newCards = cards.filter((card, index) => console.log(card));
+        console.log(newCards);
+        // setCards(newCards);
+        // return true;
+    }else{
+        console.log('they don\'t match ' + firstNumber + " " + secondNumber)
+        return false;
+    }
 }

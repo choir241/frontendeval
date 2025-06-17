@@ -1,10 +1,12 @@
-.card {
-  padding: 2rem;
-  border: 1px solid #ccc;
+.card{
+    width: 50px;
+    height: 50px;
+    border: 1px solid #000;
 }
 
-.cardContainer {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
+.cardContainer{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2rem;
 }

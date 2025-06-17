@@ -14,37 +14,32 @@
 // Once all cards are removed from the board, the game is over and the 'Play again' button should be shown
 // Clicking 'Play again' should generate a new, random set of cards on the grid
 
-import { useState } from "react";
-import { initializeCards } from "./initializeCards.ts";
-import MemoryCard from "./MemoryCard.tsx";
+// 1. 36 cards that are laid out in a 6 x 6 grid
+// 2. 2 of each randomly placed numbers from 1-18 on the grid
+// 3. Cards should be face down, no number being shown
+// 4. Clicking a card should 'reveal' it - showing the hidden number of the card
+// 5. Clicking a second card should reveal that card
+// 5.5. If the second card has the same number as the first card, 
 
-export default function App() {
-  const [flipCounter, setFlipCounter] = useState(0);
-  const [cards, setCards] = useState([
-    ...initializeCards(),
-    ...initializeCards(),
-  ]);
-  const [firstNum, setFirstNum] = useState(0);
-  const [initialReveal, setInitialReveal] = useState(false);
+// 6. both cards should be removed from the board after 3 seconds
+// 6.5. If the second card has a different number to the first card, 
+// 7. both cards should be 'hidden' again after 3 seconds (i.e. turned face down)
+// 8. The user shouldn't be able to turn over any more cards 
+// 8.5. until the 3 second timer completes and the two revealed cards are either removed (if they matched), or hidden again (if they didn't)
+// 8.5. Once all cards are removed from the board, ]
+// 9. the game is over and the 'Play again' button should be shown
+// 9.5. Clicking 'Play again' 
+// 10. should generate a new, random set of cards on the grid
+
+import RenderedCards from "./renderCards.tsx";
+import { useState } from "react";
+
+export default function App(){
+  const [cards, setCards] = useState<React.JSX.Element[]>([]);
 
   return (
-    <>
-      <section className="cardContainer">
-        {cards.map((card, index) => (
-          <MemoryCard
-            key={index}
-            initialReveal={initialReveal}
-            setInitialReveal={setInitialReveal}
-            firstNum={firstNum}
-            setFirstNum={setFirstNum}
-            num={card}
-            cards={cards}
-            setCards={setCards}
-            flipCounter={flipCounter}
-            setFlipCounter={setFlipCounter}
-          />
-        ))}
-      </section>
-    </>
-  );
+    <section className="cardContainer">
+    {RenderedCards({props: {cards, setCards: setCards}})}
+    </section>
+  )
 }
