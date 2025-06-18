@@ -13,6 +13,7 @@ interface ICard {
   id: number;
   secondFlip: React.RefObject<boolean>;
   setIsGameComplete: (isGameComplete: boolean) => void;
+  isMatched: boolean;
 }
 
 export default function GameCard({ props }: { props: ICard }) {
@@ -22,9 +23,13 @@ export default function GameCard({ props }: { props: ICard }) {
   ) {
     return (
       <section
-        className="card"
+        className={"card " + (props.isMatched ? "matched" : "")}
         onClick={() => {
-          if (!props.firstFlip.current && !props.secondFlip.current) {
+          if (
+            !props.firstFlip.current &&
+            !props.secondFlip.current &&
+            !props.isMatched
+          ) {
             props.setCardNumbers(
               props.cardNumbers.map((cardNumber) => {
                 if (cardNumber.id === props.id) {
@@ -41,7 +46,8 @@ export default function GameCard({ props }: { props: ICard }) {
             props.firstFlip.current &&
             !props.secondFlip.current &&
             !props.cardNumbers.find((cardNumber) => cardNumber.id === props.id)
-              ?.isShowing
+              ?.isShowing &&
+            !props.isMatched
           ) {
             console.log("second flip");
             props.setCardNumbers(
@@ -77,7 +83,9 @@ export default function GameCard({ props }: { props: ICard }) {
     );
   } else {
     return (
-      <section className="card">{props.isShowing ? props.number : ""}</section>
+      <section className={"card " + (props.isMatched ? "matched" : "")}>
+        {props.isShowing ? props.number : ""}
+      </section>
     );
   }
 }

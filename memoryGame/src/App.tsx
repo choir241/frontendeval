@@ -32,9 +32,10 @@
 
 // Bonuses
 // 13 show play button intially to start the game
-
 // 11 prevent double clicking
 // 12 keep grids in place after removing the ones you matched
+// 12.5 remove the first number from displaying after matching
+// 12.75 when you have a match and you flip over two mismatching tiles, continue showing the matching grids as green
 // 14 keep track of the cards you have matched vs the ones leftover
 
 import RenderedCards from "./RenderCards.tsx";
@@ -43,6 +44,7 @@ export interface ICardNumber {
   number: number;
   isShowing: boolean;
   id: number;
+  isMatched: boolean;
 }
 
 export default function App() {

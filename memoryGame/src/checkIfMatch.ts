@@ -14,12 +14,18 @@ export default function checkIfMatch({ props }: { props: IMatch }) {
   if (props.firstNumber === props.secondNumber) {
     console.log("they match " + props.firstNumber + " " + props.secondNumber);
 
-    const newCardNumbers = props.cardNumbers.filter(
-      (number) => number.number !== props.firstNumber,
-    );
+    const newCardNumbers = props.cardNumbers.map((number) => {
+      if (number.number === props.firstNumber) {
+        return { ...number, isMatched: true, isShowing: false };
+      } else {
+        return number;
+      }
+    });
+
     setTimeout(() => {
       props.setCardNumbers(newCardNumbers);
-      if (newCardNumbers.length === 0) {
+
+      if (newCardNumbers.filter((number) => !number.isMatched).length === 0) {
         props.setIsGameComplete(true);
       }
     }, 3000);
@@ -28,8 +34,16 @@ export default function checkIfMatch({ props }: { props: IMatch }) {
       "they don't match " + props.firstNumber + " " + props.secondNumber,
     );
     const updatedCardNumbers = props.cardNumbers.map((number: ICardNumber) => {
-      return { ...number, isShowing: false };
+      if (
+        number.number === props.firstNumber ||
+        number.number === props.secondNumber
+      ) {
+        return { ...number, isShowing: false };
+      } else {
+        return number;
+      }
     });
+    console.log(updatedCardNumbers);
     setTimeout(() => {
       props.setCardNumbers(updatedCardNumbers);
     }, 3000);
