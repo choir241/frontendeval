@@ -19,27 +19,52 @@
 // 3. Cards should be face down, no number being shown
 // 4. Clicking a card should 'reveal' it - showing the hidden number of the card
 // 5. Clicking a second card should reveal that card
-// 5.5. If the second card has the same number as the first card, 
-
+// 5.5. If the second card has the same number as the first card,
 // 6. both cards should be removed from the board after 3 seconds
-// 6.5. If the second card has a different number to the first card, 
+// 6.5. If the second card has a different number to the first card,
 // 7. both cards should be 'hidden' again after 3 seconds (i.e. turned face down)
-// 8. The user shouldn't be able to turn over any more cards 
+// 8. The user shouldn't be able to turn over any more cards
 // 8.5. until the 3 second timer completes and the two revealed cards are either removed (if they matched), or hidden again (if they didn't)
-// 8.5. Once all cards are removed from the board, ]
+// 8.5. Once all cards are removed from the board,
 // 9. the game is over and the 'Play again' button should be shown
-// 9.5. Clicking 'Play again' 
+// 9.5. Clicking 'Play again'
 // 10. should generate a new, random set of cards on the grid
 
-import RenderedCards from "./renderCards.tsx";
-import { useState } from "react";
+// Bonuses
+// 11 prevent double clicking
+// 12 keep grids in place after removing the ones you matched
+// 13 show play button intially to start the game
 
-export default function App(){
+import RenderedCards from "./RenderCards.tsx";
+import { useState } from "react";
+export interface ICardNumber {
+  number: number;
+  isShowing: boolean;
+  id: number;
+}
+
+export default function App() {
   const [cards, setCards] = useState<React.JSX.Element[]>([]);
+  const [cardNumbers, setCardNumbers] = useState<ICardNumber[]>([]);
+  const [isGameComplete, setIsGameComplete] = useState(false);
 
   return (
     <section className="cardContainer">
-    {RenderedCards({props: {cards, setCards: setCards}})}
+      {RenderedCards({
+        props: {
+          cards,
+          setCards,
+          cardNumbers,
+          setCardNumbers,
+          setIsGameComplete,
+          isGameComplete,
+        },
+      })}
+      {isGameComplete ? (
+        <button onClick={() => setIsGameComplete(false)}>Play Again</button>
+      ) : (
+        ""
+      )}
     </section>
-  )
+  );
 }

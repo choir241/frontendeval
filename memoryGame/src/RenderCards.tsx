@@ -1,28 +1,65 @@
 import GameCard from "./Card.tsx";
 import { useRef, useEffect } from "react";
+import type { ICardNumber } from "./App.tsx";
 
-interface IRenderedCards{
+interface IRenderedCards {
   cards: React.JSX.Element[];
   setCards: (cards: React.JSX.Element[]) => void;
+  cardNumbers: ICardNumber[];
+  setCardNumbers: (cardNumbers: ICardNumber[]) => void;
+  setIsGameComplete: (isGameComplete: boolean) => void;
+  isGameComplete: boolean;
 }
 
-export default function RenderedCards({props}: {props: IRenderedCards}){
-    let firstCard = useRef(0);
-    const firstFlip = useRef(false);
+export default function RenderedCards({ props }: { props: IRenderedCards }) {
+  let firstNumber = useRef(0);
+  const firstFlip = useRef(false);
+  const secondFlip = useRef(false);
 
-    const tempCards: React.JSX.Element[] = [];
+  const tempCardNumbers: ICardNumber[] = [];
 
-    for(let i = 0; i < 36; i++  ){
-      if(i < 18){
-        tempCards.push(<GameCard key = {i+1} props={{number: i+1, firstNumber: firstCard, firstFlip: firstFlip, setCards: props.setCards, cards: props.cards}} />)
-      }else{  
-        tempCards.push(<GameCard key = {i-17} props={{number: i-17, firstNumber: firstCard, firstFlip: firstFlip, setCards: props.setCards, cards: props.cards}} />)
-      }
+  console.log(props.isGameComplete);
+
+  for (let i = 0; i < 36; i++) {
+    if (i < 18) {
+      tempCardNumbers.push({ number: i + 1, isShowing: false, id: i });
+    } else {
+      tempCardNumbers.push({ number: i - 17, isShowing: false, id: i });
     }
+  }
+  tempCardNumbers.sort(() => Math.random() - 0.5);
 
-    useEffect(()=>{
-      props.setCards(tempCards);
-    },[]);
+  useEffect(() => {
+    props.setCardNumbers(tempCardNumbers);
+  }, [props.isGameComplete]);
 
-    return tempCards.sort(() => Math.random() - 0.5);
+  const tempCards = props.cardNumbers.map((cardNumber) => {
+    return (
+      <GameCard
+        key={cardNumber.id}
+        props={{
+          number: cardNumber.number,
+          firstNumber,
+          firstFlip,
+          secondFlip,
+          setCards: props.setCards,
+          cards: props.cards,
+          cardNumbers: props.cardNumbers,
+          setCardNumbers: props.setCardNumbers,
+          isShowing: cardNumber.isShowing,
+          id: cardNumber.id,
+          setIsGameComplete: props.setIsGameComplete,
+        }}
+      />
+    );
+  });
+
+  useEffect(() => {
+    props.setCards(tempCards);
+    if (props.isGameComplete) {
+      props.setCardNumbers([]);
+    }
+  }, [props.isGameComplete]);
+
+  return tempCards;
 }
