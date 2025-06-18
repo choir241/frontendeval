@@ -24,21 +24,35 @@ export default function GameCard({ props }: { props: ICard }) {
       <section
         className="card"
         onClick={() => {
-          props.setCardNumbers(
-            props.cardNumbers.map((cardNumber) => {
-              if (cardNumber.id === props.id) {
-                return { ...cardNumber, isShowing: !cardNumber.isShowing };
-              } else {
-                return cardNumber;
-              }
-            }),
-          );
-          if (!props.firstFlip.current) {
+          if (!props.firstFlip.current && !props.secondFlip.current) {
+            props.setCardNumbers(
+              props.cardNumbers.map((cardNumber) => {
+                if (cardNumber.id === props.id) {
+                  return { ...cardNumber, isShowing: !cardNumber.isShowing };
+                } else {
+                  return cardNumber;
+                }
+              }),
+            );
             console.log("first flip");
             props.firstNumber.current = props.number;
             props.firstFlip.current = true;
-          } else if (props.firstFlip.current) {
+          } else if (
+            props.firstFlip.current &&
+            !props.secondFlip.current &&
+            !props.cardNumbers.find((cardNumber) => cardNumber.id === props.id)
+              ?.isShowing
+          ) {
             console.log("second flip");
+            props.setCardNumbers(
+              props.cardNumbers.map((cardNumber) => {
+                if (cardNumber.id === props.id) {
+                  return { ...cardNumber, isShowing: !cardNumber.isShowing };
+                } else {
+                  return cardNumber;
+                }
+              }),
+            );
             checkIfMatch({
               props: {
                 firstNumber: props.firstNumber.current,

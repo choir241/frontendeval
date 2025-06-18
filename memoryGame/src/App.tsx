@@ -31,9 +31,11 @@
 // 10. should generate a new, random set of cards on the grid
 
 // Bonuses
+// 13 show play button intially to start the game
+
 // 11 prevent double clicking
 // 12 keep grids in place after removing the ones you matched
-// 13 show play button intially to start the game
+// 14 keep track of the cards you have matched vs the ones leftover
 
 import RenderedCards from "./RenderCards.tsx";
 import { useState } from "react";

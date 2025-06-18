@@ -18,8 +18,6 @@ export default function RenderedCards({ props }: { props: IRenderedCards }) {
 
   const tempCardNumbers: ICardNumber[] = [];
 
-  console.log(props.isGameComplete);
-
   for (let i = 0; i < 2; i++) {
     if (i === 0) {
       tempCardNumbers.push({ number: i, isShowing: false, id: i });

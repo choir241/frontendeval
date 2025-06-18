@@ -23,8 +23,6 @@ export default function checkIfMatch({ props }: { props: IMatch }) {
         props.setIsGameComplete(true);
       }
     }, 3000);
-
-    console.log(newCardNumbers.length);
   } else {
     console.log(
       "they don't match " + props.firstNumber + " " + props.secondNumber,
