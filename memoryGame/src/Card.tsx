@@ -58,8 +58,7 @@ export default function GameCard({ props }: { props: ICard }) {
           }
         }}
       >
-        {/* {props.isShowing ? props.number : ""} */}
-        {props.number}
+        {props.isShowing ? props.number : ""}
       </section>
     );
   } else {
