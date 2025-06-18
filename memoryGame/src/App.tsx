@@ -36,6 +36,7 @@
 // 12 keep grids in place after removing the ones you matched
 // 12.5 remove the first number from displaying after matching
 // 12.75 when you have a match and you flip over two mismatching tiles, continue showing the matching grids as green
+
 // 14 keep track of the cards you have matched vs the ones leftover
 
 import RenderedCards from "./RenderCards.tsx";
@@ -52,6 +53,7 @@ export default function App() {
   const [cardNumbers, setCardNumbers] = useState<ICardNumber[]>([]);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [gameStart, setGameStart] = useState("hidden");
+  const [numOfMatches, setNumOfMatches] = useState(0);
 
   return (
     <>
@@ -60,6 +62,10 @@ export default function App() {
       ) : (
         ""
       )}
+
+      <div className={`${gameStart === "hidden" ? gameStart : "score"}`}>
+        <p>Number of matches: {numOfMatches}</p>
+      </div>
 
       <section className={`${gameStart} cardContainer`}>
         {RenderedCards({
@@ -70,6 +76,8 @@ export default function App() {
             setCardNumbers,
             setIsGameComplete,
             isGameComplete,
+            numOfMatches,
+            setNumOfMatches,
           },
         })}
         {isGameComplete ? (

@@ -9,6 +9,8 @@ interface IRenderedCards {
   setCardNumbers: (cardNumbers: ICardNumber[]) => void;
   setIsGameComplete: (isGameComplete: boolean) => void;
   isGameComplete: boolean;
+  numOfMatches: number;
+  setNumOfMatches: (numOfMatches: number) => void;
 }
 
 export default function RenderedCards({ props }: { props: IRenderedCards }) {
@@ -18,7 +20,7 @@ export default function RenderedCards({ props }: { props: IRenderedCards }) {
 
   const tempCardNumbers: ICardNumber[] = [];
 
-  for (let i = 0; i < 36 ; i++) {
+  for (let i = 0; i < 36; i++) {
     if (i < 18) {
       tempCardNumbers.push({
         number: i + 1,
@@ -46,6 +48,8 @@ export default function RenderedCards({ props }: { props: IRenderedCards }) {
       <GameCard
         key={cardNumber.id}
         props={{
+          numOfMatches: props.numOfMatches,
+          setNumOfMatches: props.setNumOfMatches,
           isMatched: cardNumber.isMatched,
           number: cardNumber.number,
           firstNumber,

@@ -8,6 +8,8 @@ interface IMatch {
   cardNumbers: ICardNumber[];
   setCardNumbers: (cardNumbers: ICardNumber[]) => void;
   setIsGameComplete: (isGameComplete: boolean) => void;
+  numOfMatches: number;
+  setNumOfMatches: (numOfMatches: number) => void;
 }
 
 export default function checkIfMatch({ props }: { props: IMatch }) {
@@ -22,6 +24,7 @@ export default function checkIfMatch({ props }: { props: IMatch }) {
       }
     });
 
+    props.setNumOfMatches(props.numOfMatches + 1);
     setTimeout(() => {
       props.setCardNumbers(newCardNumbers);
 
@@ -43,7 +46,6 @@ export default function checkIfMatch({ props }: { props: IMatch }) {
         return number;
       }
     });
-    console.log(updatedCardNumbers);
     setTimeout(() => {
       props.setCardNumbers(updatedCardNumbers);
     }, 3000);

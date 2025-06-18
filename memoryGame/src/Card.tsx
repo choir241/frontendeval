@@ -14,6 +14,8 @@ interface ICard {
   secondFlip: React.RefObject<boolean>;
   setIsGameComplete: (isGameComplete: boolean) => void;
   isMatched: boolean;
+  numOfMatches: number;
+  setNumOfMatches: (numOfMatches: number) => void;
 }
 
 export default function GameCard({ props }: { props: ICard }) {
@@ -68,6 +70,8 @@ export default function GameCard({ props }: { props: ICard }) {
                 cardNumbers: props.cardNumbers,
                 setCardNumbers: props.setCardNumbers,
                 setIsGameComplete: props.setIsGameComplete,
+                numOfMatches: props.numOfMatches,
+                setNumOfMatches: props.setNumOfMatches,
               },
             });
             props.secondFlip.current = true;
