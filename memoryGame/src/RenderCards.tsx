@@ -20,11 +20,11 @@ export default function RenderedCards({ props }: { props: IRenderedCards }) {
 
   console.log(props.isGameComplete);
 
-  for (let i = 0; i < 36; i++) {
-    if (i < 18) {
-      tempCardNumbers.push({ number: i + 1, isShowing: false, id: i });
+  for (let i = 0; i < 2; i++) {
+    if (i === 0) {
+      tempCardNumbers.push({ number: i, isShowing: false, id: i });
     } else {
-      tempCardNumbers.push({ number: i - 17, isShowing: false, id: i });
+      tempCardNumbers.push({ number: i - 1, isShowing: false, id: i });
     }
   }
   tempCardNumbers.sort(() => Math.random() - 0.5);

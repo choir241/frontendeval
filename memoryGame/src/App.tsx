@@ -47,24 +47,33 @@ export default function App() {
   const [cards, setCards] = useState<React.JSX.Element[]>([]);
   const [cardNumbers, setCardNumbers] = useState<ICardNumber[]>([]);
   const [isGameComplete, setIsGameComplete] = useState(false);
+  const [gameStart, setGameStart] = useState("hidden");
 
   return (
-    <section className="cardContainer">
-      {RenderedCards({
-        props: {
-          cards,
-          setCards,
-          cardNumbers,
-          setCardNumbers,
-          setIsGameComplete,
-          isGameComplete,
-        },
-      })}
-      {isGameComplete ? (
-        <button onClick={() => setIsGameComplete(false)}>Play Again</button>
+    <>
+      {gameStart === "hidden" ? (
+        <button onClick={() => setGameStart("")}>Start Game</button>
       ) : (
         ""
       )}
-    </section>
+
+      <section className={`${gameStart} cardContainer`}>
+        {RenderedCards({
+          props: {
+            cards,
+            setCards,
+            cardNumbers,
+            setCardNumbers,
+            setIsGameComplete,
+            isGameComplete,
+          },
+        })}
+        {isGameComplete ? (
+          <button onClick={() => setIsGameComplete(false)}>Play Again</button>
+        ) : (
+          ""
+        )}
+      </section>
+    </>
   );
 }
