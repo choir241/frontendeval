@@ -38,53 +38,85 @@
 // 12.75 when you have a match and you flip over two mismatching tiles, continue showing the matching grids as green
 // 14 keep track of the cards you have matched
 
-import RenderedCards from "./RenderCards.tsx";
+import GameCard from "./Card";
 import { useState } from "react";
-export interface ICardNumber {
+export interface ICard {
   number: number;
-  isShowing: boolean;
   id: number;
   isMatched: boolean;
+  isFlipped: boolean;
 }
 
+function randomizeNumbers({ array }: { array: ICard[] }) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
+export function generateNumbers({ max, min }: { max: number; min: number }) {
+  const numbers: ICard[] = [];
+
+  for (let i = min; i <= max; i++) {
+    if (i < Math.round(max / 2) + 1) {
+      numbers.push({ number: i, isMatched: false, id: i, isFlipped: false });
+    } else {
+      numbers.push({
+        number: i - Math.round(max / 2),
+        isMatched: false,
+        isFlipped: false,
+        id: i,
+      });
+    }
+  }
+
+  return randomizeNumbers({ array: numbers });
+}
+
+const generatedNumbers = generateNumbers({ min: 1, max: 36 });
+
 export default function App() {
-  const [cards, setCards] = useState<React.JSX.Element[]>([]);
-  const [cardNumbers, setCardNumbers] = useState<ICardNumber[]>([]);
-  const [isGameComplete, setIsGameComplete] = useState(false);
-  const [gameStart, setGameStart] = useState("hidden");
-  const [numOfMatches, setNumOfMatches] = useState(0);
+  const [cardNumbers, setCardNumbers] = useState<ICard[]>(
+    generateNumbers({ min: 1, max: 36 }),
+  );
+
+  const checkIfGameComplete = cardNumbers.every(
+    (card: ICard) => card.isMatched,
+  );
 
   return (
-    <section className="mainContainer">
-      {gameStart === "hidden" ? (
-        <button onClick={() => setGameStart("")}>Start Game</button>
+    <>
+      <section
+        className={`cardContainer ${checkIfGameComplete ? "hidden" : ""}`}
+      >
+        {cardNumbers.map((card: ICard) => {
+          return (
+            <GameCard
+              key={card.id}
+              props={card}
+              cardNumbers={cardNumbers}
+              setCardNumbers={setCardNumbers}
+            />
+          );
+        })}
+      </section>
+      {checkIfGameComplete ? (
+        <button onClick={() => setCardNumbers(generatedNumbers)}>
+          Play again
+        </button>
       ) : (
         ""
       )}
-
-      <div className={`${gameStart === "hidden" ? gameStart : "score"}`}>
-        <p>Number of matches: {numOfMatches}</p>
-      </div>
-
-      <section className={`${gameStart} cardContainer`}>
-        {RenderedCards({
-          props: {
-            cards,
-            setCards,
-            cardNumbers,
-            setCardNumbers,
-            setIsGameComplete,
-            isGameComplete,
-            numOfMatches,
-            setNumOfMatches,
-          },
-        })}
-        {isGameComplete ? (
-          <button onClick={() => setIsGameComplete(false)}>Play Again</button>
-        ) : (
-          ""
-        )}
-      </section>
-    </section>
+    </>
   );
 }
