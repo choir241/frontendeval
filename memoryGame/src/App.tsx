@@ -39,7 +39,7 @@
 // 14 keep track of the cards you have matched
 
 import GameCard from "./Card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 export interface ICard {
   number: number;
   id: number;
@@ -86,9 +86,46 @@ export function generateNumbers({ max, min }: { max: number; min: number }) {
 const generatedNumbers = generateNumbers({ min: 1, max: 36 });
 
 export default function App() {
-  const [cardNumbers, setCardNumbers] = useState<ICard[]>(
-    generateNumbers({ min: 1, max: 36 }),
-  );
+  const [cardNumbers, setCardNumbers] = useState<ICard[]>(generatedNumbers);
+  const [firstCard, setFirstCard] = useState({
+    number: 0,
+    id: 0,
+    isMatched: false,
+    isFlipped: false,
+  });
+  const [secondCard, setSecondCard] = useState({
+    number: 0,
+    id: 0,
+    isMatched: false,
+    isFlipped: false,
+  });
+
+  useEffect(() => {
+    if (!firstCard.isMatched && firstCard.number && secondCard.number) {
+      setTimeout(() => {
+        const updateCards = cardNumbers.map((card: ICard) => {
+          return { ...card, isFlipped: false };
+        });
+        setCardNumbers(updateCards);
+      }, 3000);
+    }
+
+    if (firstCard.isMatched && secondCard.isMatched) {
+      setTimeout(() => {
+        const updateCards = cardNumbers.map((card: ICard) => {
+          if (card.id === firstCard.id || card.id === secondCard.id) {
+            return { ...card, isMatched: true, isFlipped: false };
+          } else {
+            return card;
+          }
+        });
+        setCardNumbers(updateCards);
+        setFirstCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
+
+        setSecondCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
+      }, 3000);
+    }
+  }, [firstCard, secondCard]);
 
   const checkIfGameComplete = cardNumbers.every(
     (card: ICard) => card.isMatched,
@@ -104,14 +141,20 @@ export default function App() {
             <GameCard
               key={card.id}
               props={card}
-              cardNumbers={cardNumbers}
-              setCardNumbers={setCardNumbers}
+              firstCard={firstCard}
+              secondCard={secondCard}
+              setFirstCard={setFirstCard}
+              setSecondCard={setSecondCard}
             />
           );
         })}
       </section>
       {checkIfGameComplete ? (
-        <button onClick={() => setCardNumbers(generatedNumbers)}>
+        <button
+          onClick={() => {
+            setCardNumbers(generateNumbers({ min: 1, max: 36 }));
+          }}
+        >
           Play again
         </button>
       ) : (

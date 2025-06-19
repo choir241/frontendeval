@@ -1,78 +1,62 @@
 // GameCard should re-render, but should not cause App to re-render.
 
 import { type ICard } from "./App";
+import { useState } from "react";
 
 export default function GameCard({
   props,
-  cardNumbers,
-  setCardNumbers,
+  firstCard,
+  secondCard,
+  setFirstCard,
+  setSecondCard,
 }: {
   props: ICard;
-  cardNumbers: ICard[];
-  setCardNumbers: (e: ICard[]) => void;
+  firstCard: ICard;
+  secondCard: ICard;
+  setFirstCard: (e: ICard) => void;
+  setSecondCard: (e: ICard) => void;
 }) {
-  function checkIfMatch({ array }: { array: ICard[] }) {
-    const filterFlippedCards = array.filter((card: ICard) =>
-      card.isFlipped ? card : "",
-    );
+  const [currentCard, setCurrentCard] = useState(props);
 
-    const firstNumber = filterFlippedCards[0].number;
-    const secondNumber = filterFlippedCards[1].number;
+  function checkIfMatch() {
+    if (firstCard.number === props.number) {
+      console.log("match");
+      setFirstCard({ ...firstCard, isMatched: true, isFlipped: false });
 
-    if (firstNumber === secondNumber) {
-      const updateMatchedStatus = cardNumbers.map((card: ICard) => {
-        if (card.number === firstNumber) {
-          return { ...card, isMatched: true, isFlipped: false };
-        } else {
-          return card;
-        }
-      });
-      setTimeout(() => {
-        setCardNumbers(updateMatchedStatus);
-      }, 3000);
+      setSecondCard({ ...props, isMatched: true, isFlipped: false });
     } else {
-      setTimeout(() => {
-        const resetFlippedStatus = cardNumbers.map((card: ICard) => {
-          return { ...card, isFlipped: false };
-        });
+      console.log("no match");
 
-        setCardNumbers(resetFlippedStatus);
+      setTimeout(() => {
+        setFirstCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
+
+        setSecondCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
       }, 3000);
     }
   }
 
-  let checkFlipCount = 0;
-
-  cardNumbers.forEach((card: ICard) => {
-    card.isFlipped ? checkFlipCount++ : "";
-  });
-
-  if (checkFlipCount !== 2) {
+  if (firstCard.number && secondCard.number) {
     return (
-      <div
-        className={`card ${props.isMatched ? "matched" : ""}`}
-        onClick={() => {
-          const updatedFlippedStatus = cardNumbers.map((card: ICard) => {
-            if (card.id === props.id) {
-              return { ...card, isFlipped: true };
-            } else {
-              return card;
-            }
-          });
-
-          setCardNumbers(updatedFlippedStatus);
-
-          if (checkFlipCount === 1) {
-            checkIfMatch({ array: updatedFlippedStatus });
-          }
-        }}
-      >
+      <div className={`card ${props.isMatched ? "matched" : ""}`}>
         {props.isFlipped ? props.number : ""}
       </div>
     );
   } else {
     return (
-      <div className={`card ${props.isMatched ? "matched" : ""}`}>
+      <div
+        className={`card ${props.isMatched ? "matched" : ""}`}
+        onClick={() => {
+          props.isFlipped = true;
+          setCurrentCard({ ...currentCard, isFlipped: true });
+
+          if (!firstCard.number && !secondCard.number) {
+            setFirstCard(props);
+          } else if (firstCard.number && !secondCard.number) {
+            setSecondCard(props);
+            checkIfMatch();
+          }
+        }}
+      >
         {props.isFlipped ? props.number : ""}
       </div>
     );
