@@ -83,49 +83,65 @@ export function generateNumbers({ max, min }: { max: number; min: number }) {
   return randomizeNumbers({ array: numbers });
 }
 
-const generatedNumbers = generateNumbers({ min: 1, max: 36 });
+// const generatedNumbers = generateNumbers({ min: 1, max: 36 });
 
 export default function App() {
-  const [cardNumbers, setCardNumbers] = useState<ICard[]>(generatedNumbers);
+  const [cardNumbers, setCardNumbers] = useState<ICard[]>(
+    generateNumbers({ min: 1, max: 36 }),
+  );
   const [firstCard, setFirstCard] = useState({
     number: 0,
     id: 0,
     isMatched: false,
     isFlipped: false,
   });
-  const [secondCard, setSecondCard] = useState({
-    number: 0,
-    id: 0,
-    isMatched: false,
-    isFlipped: false,
-  });
 
-  useEffect(() => {
-    if (!firstCard.isMatched && firstCard.number && secondCard.number) {
-      setTimeout(() => {
-        const updateCards = cardNumbers.map((card: ICard) => {
+  function clickHandler(props: ICard) {
+    const findCard = cardNumbers.filter(
+      (card: ICard) => card.id === props.id,
+    )[0];
+    const findSecondCard = cardNumbers.filter(
+      (card: ICard) => card.id === findCard.id,
+    )[0];
+    if (!firstCard.number) {
+      setFirstCard(findCard);
+    } else if (firstCard.number && firstCard.number === findCard.number) {
+      console.log("match");
+      const updatedMatches = cardNumbers.map((card: ICard) => {
+        if (card.id === firstCard.id || card.id === findSecondCard.id) {
+          return { ...card, isFlipped: false, isMatched: true };
+        } else {
+          return card;
+        }
+      });
+      setFirstCard({
+        number: 0,
+        id: 0,
+        isMatched: false,
+        isFlipped: false,
+      });
+      setCardNumbers(updatedMatches);
+    } else if (firstCard.number && firstCard.number !== findCard.number) {
+      console.log("no match");
+      const updatedFlips = cardNumbers.map((card: ICard) => {
+        if (card.id === firstCard.id || card.id === findSecondCard.id) {
           return { ...card, isFlipped: false };
-        });
-        setCardNumbers(updateCards);
-      }, 3000);
+        } else {
+          return card;
+        }
+      });
+      setCardNumbers(updatedFlips);
+      setFirstCard({
+        number: 0,
+        id: 0,
+        isMatched: false,
+        isFlipped: false,
+      });
     }
+  }
 
-    if (firstCard.isMatched && secondCard.isMatched) {
-      setTimeout(() => {
-        const updateCards = cardNumbers.map((card: ICard) => {
-          if (card.id === firstCard.id || card.id === secondCard.id) {
-            return { ...card, isMatched: true, isFlipped: false };
-          } else {
-            return card;
-          }
-        });
-        setCardNumbers(updateCards);
-        setFirstCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
-
-        setSecondCard({ number: 0, id: 0, isMatched: false, isFlipped: false });
-      }, 3000);
-    }
-  }, [firstCard, secondCard]);
+  // we need to compare the first and second number in App
+  // we need to compare only when two cards have been flipped
 
   const checkIfGameComplete = cardNumbers.every(
     (card: ICard) => card.isMatched,
@@ -138,14 +154,7 @@ export default function App() {
       >
         {cardNumbers.map((card: ICard) => {
           return (
-            <GameCard
-              key={card.id}
-              props={card}
-              firstCard={firstCard}
-              secondCard={secondCard}
-              setFirstCard={setFirstCard}
-              setSecondCard={setSecondCard}
-            />
+            <GameCard key={card.id} props={card} clickHandler={clickHandler} />
           );
         })}
       </section>
