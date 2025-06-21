@@ -39,7 +39,7 @@
 // 14 keep track of the cards you have matched
 
 import GameCard from "./Card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 export interface ICard {
   number: number;
   id: number;
@@ -47,31 +47,42 @@ export interface ICard {
   isFlipped: boolean;
 }
 
-function randomizeNumbers({ array }: { array: ICard[] }) {
-  let currentIndex = array.length,
+function randomizeCardNumbers({ cardNumbers }: { cardNumbers: ICard[] }) {
+  let currentIndex = cardNumbers.length,
     randomIndex;
 
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [cardNumbers[currentIndex], cardNumbers[randomIndex]] = [
+      cardNumbers[randomIndex],
+      cardNumbers[currentIndex],
     ];
   }
 
-  return array;
+  return cardNumbers;
 }
 
-export function generateNumbers({ max, min }: { max: number; min: number }) {
-  const numbers: ICard[] = [];
+export function generateCardNumbers({
+  max,
+  min,
+}: {
+  max: number;
+  min: number;
+}) {
+  const cardNumbers: ICard[] = [];
 
   for (let i = min; i <= max; i++) {
     if (i < Math.round(max / 2) + 1) {
-      numbers.push({ number: i, isMatched: false, id: i, isFlipped: false });
+      cardNumbers.push({
+        number: i,
+        isMatched: false,
+        id: i,
+        isFlipped: false,
+      });
     } else {
-      numbers.push({
+      cardNumbers.push({
         number: i - Math.round(max / 2),
         isMatched: false,
         isFlipped: false,
@@ -80,14 +91,12 @@ export function generateNumbers({ max, min }: { max: number; min: number }) {
     }
   }
 
-  return randomizeNumbers({ array: numbers });
+  return randomizeCardNumbers({ cardNumbers });
 }
-
-// const generatedNumbers = generateNumbers({ min: 1, max: 36 });
 
 export default function App() {
   const [cardNumbers, setCardNumbers] = useState<ICard[]>(
-    generateNumbers({ min: 1, max: 36 }),
+    generateCardNumbers({ min: 1, max: 36 }),
   );
   const [firstCard, setFirstCard] = useState({
     number: 0,
@@ -96,18 +105,22 @@ export default function App() {
     isFlipped: false,
   });
 
-  function clickHandler(props: ICard) {
-    const findCard = cardNumbers.filter(
-      (card: ICard) => card.id === props.id,
-    )[0];
-    const findSecondCard = cardNumbers.filter(
-      (card: ICard) => card.id === findCard.id,
-    )[0];
+  function findCard(currentCard: ICard) {
+    return cardNumbers.filter((card: ICard) => card.id === currentCard.id)[0];
+  }
+
+  function checkIfCardsMatch(props: ICard) {
+    const findInitialCard = findCard(props);
+    const findSecondCard = findCard(findInitialCard);
+
     if (!firstCard.number) {
-      setFirstCard(findCard);
-    } else if (firstCard.number && firstCard.number === findCard.number) {
+      setFirstCard(props);
+    } else if (
+      firstCard.number &&
+      firstCard.number === findInitialCard.number
+    ) {
       console.log("match");
-      const updatedMatches = cardNumbers.map((card: ICard) => {
+      const updateCardMatchStatuses = cardNumbers.map((card: ICard) => {
         if (card.id === firstCard.id || card.id === findSecondCard.id) {
           return { ...card, isFlipped: false, isMatched: true };
         } else {
@@ -120,17 +133,20 @@ export default function App() {
         isMatched: false,
         isFlipped: false,
       });
-      setCardNumbers(updatedMatches);
-    } else if (firstCard.number && firstCard.number !== findCard.number) {
+      setCardNumbers(updateCardMatchStatuses);
+    } else if (
+      firstCard.number &&
+      firstCard.number !== findInitialCard.number
+    ) {
       console.log("no match");
-      const updatedFlips = cardNumbers.map((card: ICard) => {
+      const updateCardFlipStatuses = cardNumbers.map((card: ICard) => {
         if (card.id === firstCard.id || card.id === findSecondCard.id) {
           return { ...card, isFlipped: false };
         } else {
           return card;
         }
       });
-      setCardNumbers(updatedFlips);
+      setCardNumbers(updateCardFlipStatuses);
       setFirstCard({
         number: 0,
         id: 0,
@@ -154,14 +170,18 @@ export default function App() {
       >
         {cardNumbers.map((card: ICard) => {
           return (
-            <GameCard key={card.id} props={card} clickHandler={clickHandler} />
+            <GameCard
+              key={card.id}
+              card={card}
+              onClickEventHandler={checkIfCardsMatch}
+            />
           );
         })}
       </section>
       {checkIfGameComplete ? (
         <button
           onClick={() => {
-            setCardNumbers(generateNumbers({ min: 1, max: 36 }));
+            setCardNumbers(generateCardNumbers({ min: 1, max: 36 }));
           }}
         >
           Play again
