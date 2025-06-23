@@ -26,6 +26,7 @@ export default function App() {
     ICountHistory[]
   >([]);
   const [undoCount, setUndoCount] = useState<number>(0);
+  let keyValue = 0;
 
   function updateCount(counterValue: number) {
     let updatedValue = count + counterValue;
@@ -81,16 +82,19 @@ export default function App() {
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(-1)}
+          addedToCount={-1}
           label={"-1"}
         />
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(-10)}
+          addedToCount={-10}
           label={"-10"}
         />
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(-100)}
+          addedToCount={-100}
           label={"-100"}
         />
 
@@ -99,16 +103,19 @@ export default function App() {
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(1)}
+          addedToCount={1}
           label={"+1"}
         />
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(10)}
+          addedToCount={10}
           label={"+10"}
         />
         <Button
           isDisabled={false}
           onClickEventHandler={() => updateCount(100)}
+          addedToCount={100}
           label={"+100"}
         />
       </section>
@@ -116,19 +123,22 @@ export default function App() {
         <Button
           isDisabled={counterHistory.length === 0}
           onClickEventHandler={() => undoCountUpdate()}
+          addedToCount={0}
           label={"Undo"}
         />
         <Button
           isDisabled={!(undoCount > 0)}
           onClickEventHandler={() => redoCountUpdate()}
+          addedToCount={0}
           label={"Redo"}
         />
       </section>
 
       <section>
         {counterHistory.map((countHistory: ICountHistory) => {
+          keyValue += 1;
           return (
-            <div className="counterHistoryContainer">
+            <div key={keyValue} className="counterHistoryContainer">
               <span>
                 {countHistory.addedToCount > 0 ? "+" : "-"}{" "}
                 {Math.abs(countHistory.addedToCount)}
