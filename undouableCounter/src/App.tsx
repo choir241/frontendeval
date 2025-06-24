@@ -26,6 +26,7 @@ export default function App() {
     ICountHistory[]
   >([]);
   const [undoCount, setUndoCount] = useState<number>(0);
+  const [isUndo, setIsUndo] = useState<boolean>(false);
   let keyValue = 0;
 
   function updateCount(counterValue: number) {
@@ -38,6 +39,7 @@ export default function App() {
 
     setCounterHistory(updatedCounterHistory);
     setArchivedCounterHistory(updatedCounterHistory);
+    setIsUndo(false);
   }
 
   function undoCountUpdate() {
@@ -52,12 +54,13 @@ export default function App() {
         setCount(count - latestEntry.addedToCount);
         setCounterHistory(updatedCounterHistoryWithUndo);
         setUndoCount(undoCount + 1);
+        setIsUndo(true);
       }
     }
   }
 
   function redoCountUpdate() {
-    if (undoCount > 0) {
+    if (undoCount > 0 && isUndo) {
       const latestUndo = archivedCounterHistory[undoCount - 1];
       let updatedValue = count + latestUndo.addedToCount;
       let updatedCounterHistory = [
@@ -127,7 +130,7 @@ export default function App() {
           label={"Undo"}
         />
         <Button
-          isDisabled={!(undoCount > 0)}
+          isDisabled={!(undoCount > 0 && isUndo)}
           onClickEventHandler={() => redoCountUpdate()}
           addedToCount={0}
           label={"Redo"}
