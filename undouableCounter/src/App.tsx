@@ -22,60 +22,60 @@ export default function App() {
 
   const [count, setCount] = useState<number>(0);
   const [counterHistory, setCounterHistory] = useState<ICountHistory[]>([]);
-  const [archivedCounterHistory, setArchivedCounterHistory] = useState<
-    ICountHistory[]
-  >([]);
-  const [undoCount, setUndoCount] = useState<number>(0);
+  const [undoCounterHistory, setUndoCounterHistory] = useState<ICountHistory[]>(
+    [],
+  );
   const [isUndo, setIsUndo] = useState<boolean>(false);
+
   let keyValue = 0;
 
   function updateCount(counterValue: number) {
-    let updatedValue = count + counterValue;
-    let updatedCounterHistory = [
+    setCount(count + counterValue);
+    // updates counter history with new update user made
+    setCounterHistory([
       ...counterHistory,
-      { previousValue: count, updatedValue, addedToCount: counterValue },
-    ];
-    setCount(updatedValue);
-
-    setCounterHistory(updatedCounterHistory);
-    setArchivedCounterHistory(updatedCounterHistory);
+      {
+        previousValue: count,
+        updatedValue: count + counterValue,
+        addedToCount: counterValue,
+      },
+    ]);
     setIsUndo(false);
   }
 
   function undoCountUpdate() {
-    const updatedCounterHistoryWithUndo = counterHistory.slice(
-      0,
-      counterHistory.length - 1,
-    );
     const latestEntry = counterHistory[counterHistory.length - 1];
 
-    if (undoCount <= 50 && undoCount >= 0) {
-      if (counterHistory.length) {
-        setCount(count - latestEntry.addedToCount);
-        setCounterHistory(updatedCounterHistoryWithUndo);
-        setUndoCount(undoCount + 1);
-        setIsUndo(true);
-      }
+    if (
+      counterHistory.length &&
+      undoCounterHistory.length < 50 &&
+      undoCounterHistory.length >= 0
+    ) {
+      setCount(count - latestEntry.addedToCount);
+      // simulates undo functionality - removes latest entry in counter history
+      setCounterHistory(counterHistory.slice(0, counterHistory.length - 1));
+      setUndoCounterHistory([...undoCounterHistory, latestEntry]);
+      setIsUndo(true);
     }
   }
 
   function redoCountUpdate() {
-    if (undoCount > 0 && isUndo) {
-      const latestUndo = archivedCounterHistory[undoCount - 1];
-      let updatedValue = count + latestUndo.addedToCount;
-      let updatedCounterHistory = [
+    if (undoCounterHistory.length && isUndo) {
+      const latestUndo = undoCounterHistory[undoCounterHistory.length - 1];
+
+      setCount(count + latestUndo.addedToCount);
+      // updates counter hstory with most recent counter history that was undo
+      setCounterHistory([
         ...counterHistory,
         {
           previousValue: count,
-          updatedValue,
+          updatedValue: count + latestUndo.addedToCount,
           addedToCount: latestUndo.addedToCount,
         },
-      ];
-      setCount(updatedValue);
-      setCounterHistory(updatedCounterHistory);
-      if (undoCount > 0) {
-        setUndoCount(undoCount - 1);
-      }
+      ]);
+      setUndoCounterHistory(
+        undoCounterHistory.slice(0, undoCounterHistory.length - 1),
+      );
     }
   }
 
@@ -130,7 +130,7 @@ export default function App() {
           label={"Undo"}
         />
         <Button
-          isDisabled={!(undoCount > 0 && isUndo)}
+          isDisabled={!(undoCounterHistory.length > 0 && isUndo)}
           onClickEventHandler={() => redoCountUpdate()}
           addedToCount={0}
           label={"Redo"}
