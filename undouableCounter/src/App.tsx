@@ -25,6 +25,7 @@ export default function App() {
   const [undoCounterHistory, setUndoCounterHistory] = useState<
     ICounterHistory[]
   >([]);
+  const [undoCounter, setUndoCounter] = useState(0);
   const [isUndo, setIsUndo] = useState(false);
 
   function updateCounter(counterValue: number) {
@@ -39,6 +40,7 @@ export default function App() {
       },
     ]);
     setIsUndo(false);
+    setUndoCounter(0);
   }
 
   function undoCounterUpdate() {
@@ -54,11 +56,12 @@ export default function App() {
       setCounterHistory(counterHistory.slice(0, counterHistory.length - 1));
       setUndoCounterHistory([...undoCounterHistory, latestEntry]);
       setIsUndo(true);
+      setUndoCounter(undoCounter + 1);
     }
   }
 
   function redoCounterUpdate() {
-    if (undoCounterHistory.length && isUndo) {
+    if (undoCounterHistory.length && isUndo && undoCounter > 0) {
       const latestUndo = undoCounterHistory[undoCounterHistory.length - 1];
 
       setCounter(counter + latestUndo.addedToCounter);
@@ -74,6 +77,7 @@ export default function App() {
       setUndoCounterHistory(
         undoCounterHistory.slice(0, undoCounterHistory.length - 1)
       );
+      setUndoCounter(undoCounter - 1);
     }
   }
 
@@ -87,7 +91,7 @@ export default function App() {
           label={"Undo"}
         />
         <Button
-          isDisabled={!(undoCounterHistory.length > 0 && isUndo)}
+          isDisabled={!(undoCounterHistory.length > 0 && isUndo && undoCounter > 0)}
           onClickEventHandler={() => redoCounterUpdate()}
           addedToCounter={0}
           label={"Redo"}
