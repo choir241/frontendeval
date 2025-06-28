@@ -1,9 +1,30 @@
+.flex{
+ display: flex;
+} 
+
+.justifyCenter{
+  justify-content: center;
+}
+
 .counterHistoryContainer {
+  width: 50%;
+  max-height: 300px;
+  margin-top: 4rem;
+  overflow-y: scroll;
+    border: 1px solid black;
+}
+
+.subCounterHistoryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.counterHistoryGridBox {
+  padding: 1rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 2rem;
-  width: 70%;
 }
 
 .buttonContainer {
@@ -16,11 +37,12 @@
 .secondaryButtonContainer {
   display: flex;
   justify-content: space-around;
-  margin-top: 2rem;
+  margin-bottom: 2rem;
   align-items: center;
 }
 
 button {
+  cursor: pointer;
   padding: 1rem 2rem 1rem 2rem;
 }
 

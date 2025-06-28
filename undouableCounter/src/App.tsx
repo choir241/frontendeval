@@ -14,36 +14,34 @@ import { useState } from "react";
 import Button from "./Button";
 
 export default function App() {
-  interface ICountHistory {
+  interface ICounterHistory {
     previousValue: number;
     updatedValue: number;
-    addedToCount: number;
+    addedToCounter: number;
   }
 
-  const [count, setCount] = useState<number>(0);
-  const [counterHistory, setCounterHistory] = useState<ICountHistory[]>([]);
-  const [undoCounterHistory, setUndoCounterHistory] = useState<ICountHistory[]>(
-    [],
-  );
-  const [isUndo, setIsUndo] = useState<boolean>(false);
+  const [counter, setCounter] = useState(0);
+  const [counterHistory, setCounterHistory] = useState<ICounterHistory[]>([]);
+  const [undoCounterHistory, setUndoCounterHistory] = useState<
+    ICounterHistory[]
+  >([]);
+  const [isUndo, setIsUndo] = useState(false);
 
-  let keyValue = 0;
-
-  function updateCount(counterValue: number) {
-    setCount(count + counterValue);
+  function updateCounter(counterValue: number) {
+    setCounter(counter + counterValue);
     // updates counter history with new update user made
     setCounterHistory([
       ...counterHistory,
       {
-        previousValue: count,
-        updatedValue: count + counterValue,
-        addedToCount: counterValue,
+        previousValue: counter,
+        updatedValue: counter + counterValue,
+        addedToCounter: counterValue,
       },
     ]);
     setIsUndo(false);
   }
 
-  function undoCountUpdate() {
+  function undoCounterUpdate() {
     const latestEntry = counterHistory[counterHistory.length - 1];
 
     if (
@@ -51,7 +49,7 @@ export default function App() {
       undoCounterHistory.length < 50 &&
       undoCounterHistory.length >= 0
     ) {
-      setCount(count - latestEntry.addedToCount);
+      setCounter(counter - latestEntry.addedToCounter);
       // simulates undo functionality - removes latest entry in counter history
       setCounterHistory(counterHistory.slice(0, counterHistory.length - 1));
       setUndoCounterHistory([...undoCounterHistory, latestEntry]);
@@ -59,98 +57,102 @@ export default function App() {
     }
   }
 
-  function redoCountUpdate() {
+  function redoCounterUpdate() {
     if (undoCounterHistory.length && isUndo) {
       const latestUndo = undoCounterHistory[undoCounterHistory.length - 1];
 
-      setCount(count + latestUndo.addedToCount);
+      setCounter(counter + latestUndo.addedToCounter);
       // updates counter hstory with most recent counter history that was undo
       setCounterHistory([
         ...counterHistory,
         {
-          previousValue: count,
-          updatedValue: count + latestUndo.addedToCount,
-          addedToCount: latestUndo.addedToCount,
+          previousValue: counter,
+          updatedValue: counter + latestUndo.addedToCounter,
+          addedToCounter: latestUndo.addedToCounter,
         },
       ]);
       setUndoCounterHistory(
-        undoCounterHistory.slice(0, undoCounterHistory.length - 1),
+        undoCounterHistory.slice(0, undoCounterHistory.length - 1)
       );
     }
   }
 
   return (
     <>
-      <section className="buttonContainer">
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(-1)}
-          addedToCount={-1}
-          label={"-1"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(-10)}
-          addedToCount={-10}
-          label={"-10"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(-100)}
-          addedToCount={-100}
-          label={"-100"}
-        />
-
-        <span className="count">{count}</span>
-
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(1)}
-          addedToCount={1}
-          label={"+1"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(10)}
-          addedToCount={10}
-          label={"+10"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCount(100)}
-          addedToCount={100}
-          label={"+100"}
-        />
-      </section>
       <section className="secondaryButtonContainer">
         <Button
           isDisabled={counterHistory.length === 0}
-          onClickEventHandler={() => undoCountUpdate()}
-          addedToCount={0}
+          onClickEventHandler={() => undoCounterUpdate()}
+          addedToCounter={0}
           label={"Undo"}
         />
         <Button
           isDisabled={!(undoCounterHistory.length > 0 && isUndo)}
-          onClickEventHandler={() => redoCountUpdate()}
-          addedToCount={0}
+          onClickEventHandler={() => redoCounterUpdate()}
+          addedToCounter={0}
           label={"Redo"}
         />
       </section>
+      <section className="buttonContainer">
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(-100)}
+          addedToCounter={-100}
+          label={"-100"}
+        />
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(-10)}
+          addedToCounter={-10}
+          label={"-10"}
+        />
 
-      <section>
-        {counterHistory.map((countHistory: ICountHistory) => {
-          keyValue += 1;
-          return (
-            <div key={keyValue} className="counterHistoryContainer">
-              <span>
-                {countHistory.addedToCount > 0 ? "+" : "-"}{" "}
-                {Math.abs(countHistory.addedToCount)}
-              </span>
-              <span>{`(${countHistory.previousValue} -> ${countHistory.updatedValue})`}</span>
-            </div>
-          );
-        })}
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(-1)}
+          addedToCounter={-1}
+          label={"-1"}
+        />
+
+        <span className="count">{counter}</span>
+
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(1)}
+          addedToCounter={1}
+          label={"+1"}
+        />
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(10)}
+          addedToCounter={10}
+          label={"+10"}
+        />
+        <Button
+          isDisabled={false}
+          onClickEventHandler={() => updateCounter(100)}
+          addedToCounter={100}
+          label={"+100"}
+        />
       </section>
+
+      <div className="flex justifyCenter">
+        <div className="counterHistoryContainer">
+          <section className="subCounterHistoryContainer">
+            {counterHistory.map((counterHistory, index) => {
+              return (
+                <div key={index} className="counterHistoryGridBox">
+                  <span>
+                    {counterHistory.addedToCounter > 0 ? "+" : "-"}{" "}
+                    {Math.abs(counterHistory.addedToCounter)}
+                  </span>
+                  <span>{`(${counterHistory.previousValue} -> ${counterHistory.updatedValue})`}</span>
+                </div>
+              );
+            })}
+          </section>
+        </div>
+      </div>
     </>
   );
 }
