@@ -25,8 +25,6 @@ export default function App() {
   const [undoCounterHistory, setUndoCounterHistory] = useState<
     ICounterHistory[]
   >([]);
-  const [undoCounter, setUndoCounter] = useState(0);
-  const [isUndo, setIsUndo] = useState(false);
 
   function updateCounter(counterValue: number) {
     setCounter(counter + counterValue);
@@ -39,8 +37,7 @@ export default function App() {
         addedToCounter: counterValue,
       },
     ]);
-    setIsUndo(false);
-    setUndoCounter(0);
+    setUndoCounterHistory([]);
   }
 
   function undoCounterUpdate() {
@@ -55,13 +52,12 @@ export default function App() {
       // simulates undo functionality - removes latest entry in counter history
       setCounterHistory(counterHistory.slice(0, counterHistory.length - 1));
       setUndoCounterHistory([...undoCounterHistory, latestEntry]);
-      setIsUndo(true);
-      setUndoCounter(undoCounter + 1);
+
     }
   }
 
   function redoCounterUpdate() {
-    if (undoCounterHistory.length && isUndo && undoCounter > 0) {
+    if (undoCounterHistory.length) {
       const latestUndo = undoCounterHistory[undoCounterHistory.length - 1];
 
       setCounter(counter + latestUndo.addedToCounter);
@@ -77,7 +73,6 @@ export default function App() {
       setUndoCounterHistory(
         undoCounterHistory.slice(0, undoCounterHistory.length - 1)
       );
-      setUndoCounter(undoCounter - 1);
     }
   }
 
@@ -91,7 +86,7 @@ export default function App() {
           label={"Undo"}
         />
         <Button
-          isDisabled={!(undoCounterHistory.length > 0 && isUndo && undoCounter > 0)}
+          isDisabled={!(undoCounterHistory.length > 0)}
           onClickEventHandler={() => redoCounterUpdate()}
           addedToCounter={0}
           label={"Redo"}
