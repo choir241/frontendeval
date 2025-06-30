@@ -30,81 +30,31 @@ export interface IGrid {
   left: number;
   x: number;
   y: number;
+  id: number;
 }
 
 export default function App() {
   const [startDragCoordinates, setStartDragCoordinates] = useState<number[]>(
     []
   );
-  const [endDragCoordinates, setEndDragCoordinates] = useState<number[]>([]);
   const [grid, setGrid] = useState<React.JSX.Element[]>([]);
-  const [gridCoordinates, setGridCoordinates] = useState<IGrid>({
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    x: 0,
-    y: 0,
-  });
+  const [gridCoordinates, setGridCoordinates] = useState<IGrid[]>(
+    Array(100).fill(null)
+  );
 
-  useEffect(() => {
-    console.log(startDragCoordinates);
-    console.log(endDragCoordinates);
-
+  function createSelectionBox({ x, y }: { x: number; y: number }) {
     const xStart = startDragCoordinates[0];
     const yStart = startDragCoordinates[1];
-    const xEnd = endDragCoordinates[0];
-    const yEnd = endDragCoordinates[1];
+    const xEnd = x;
+    const yEnd = y;
 
-    let missingSelectBoxCornerCoordinate: number[] = [];
-    let otherMissingSelectBoxCornerCoordinate: number[] = [];
-
-    if (xStart > xEnd) {
-      // we dragged from the right
-      // we dropped at the left
-      if (yStart > yEnd) {
-        // we dragged from the bottom
-        // we dropped at the top
-        // we dragged from right bottom to left top
-
-        // right top
-        missingSelectBoxCornerCoordinate = [xStart, yEnd];
-        // left bottom
-        otherMissingSelectBoxCornerCoordinate = [xEnd, yStart];
-      } else if (yStart < yEnd) {
-        // we dragged from the top
-        // we dropped at the bottom
-        // we dragged from right top to left bottom
-
-        // left top
-        missingSelectBoxCornerCoordinate = [xEnd, yStart];
-        // right bottom
-        otherMissingSelectBoxCornerCoordinate = [xStart, yEnd];
-      }
-    } else if (xStart < xEnd) {
-      // we dragged from the left
-      // we dropped at the right
-      if (yStart > yEnd) {
-        // we dragged from the bottom
-        // we dropped at the top
-        // we dragged from left bottom to right top
-
-        // right bottom
-        missingSelectBoxCornerCoordinate = [xStart, yEnd];
-        // left top
-        otherMissingSelectBoxCornerCoordinate = [xEnd, yStart];
-      } else if (yStart < yEnd) {
-        // we dragged from the top
-        // we dropped at the bottom
-        // we dragged from left top to right bottom
-
-        // right top
-        missingSelectBoxCornerCoordinate = [xEnd, yStart];
-        // left bottom
-        otherMissingSelectBoxCornerCoordinate = [xStart, yEnd];
-      }
-    }
-  }, [startDragCoordinates, endDragCoordinates]);
+    checkForGridSelection({
+      xStart,
+      yStart,
+      xEnd,
+      yEnd,
+    });
+  }
 
   useEffect(() => {
     function grabCoordinates({
@@ -114,6 +64,7 @@ export default function App() {
       left,
       x,
       y,
+      id,
     }: {
       top: number;
       right: number;
@@ -121,29 +72,68 @@ export default function App() {
       left: number;
       x: number;
       y: number;
+      id: number;
     }) {
-      if (startDragCoordinates.length) {
-        setGridCoordinates({ top, right, bottom, left, x, y });
-      }
+      setGridCoordinates((prev) => {
+        const newCoords = [...prev];
+        newCoords[id] = { top, right, bottom, left, x, y, id };
+        return newCoords;
+      });
     }
 
     const grid = [];
+
     for (let i = 0; i < 100; i++) {
-      grid.push(<GridCell key={i} grabCoordinates={grabCoordinates} />);
+      grid.push(
+        <GridCell
+          id={i}
+          key={i}
+          grabCoordinates={grabCoordinates}
+          startDragCoordinates={startDragCoordinates}
+        />
+      );
     }
     setGrid(grid);
-      console.log(gridCoordinates);
-  }, [startDragCoordinates, gridCoordinates]);
+  }, [gridCoordinates]);
+
+  function checkForGridSelection({
+    xStart,
+    yStart,
+    xEnd,
+    yEnd,
+  }: {
+    xEnd: number;
+    yEnd: number;
+    xStart: number;
+    yStart: number;
+  }) {
+    const xMin = Math.min(xStart, xEnd);
+    const xMax = Math.max(xStart, xEnd);
+    const yMin = Math.min(yStart, yEnd);
+    const yMax = Math.max(yStart, yEnd);
+
+    const findSelectedGrids = gridCoordinates.filter((gridBox) => {
+      const fullyContained =
+        gridBox.left >= xMin &&
+        gridBox.right <= xMax &&
+        gridBox.top >= yMin &&
+        gridBox.bottom <= yMax;
+
+      console.log(fullyContained ? gridBox.id : "");
+
+      return fullyContained;
+    });
+    console.log(findSelectedGrids);
+  }
 
   return (
     <div
       className="mainContainer"
       onMouseDown={(e) => {
-        setStartDragCoordinates([e.screenX, e.screenY]);
-        setEndDragCoordinates([]);
+        setStartDragCoordinates([e.clientX, e.clientY]);
       }}
       onMouseUp={(e) => {
-        setEndDragCoordinates([e.screenX, e.screenY]);
+        createSelectionBox({ x: e.clientX, y: e.clientY });
       }}
     >
       <section className="gridContainer">{grid}</section>
