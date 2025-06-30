@@ -45,8 +45,7 @@ export default function App() {
 
     if (
       counterHistory.length &&
-      undoCounterHistory.length < 50 &&
-      undoCounterHistory.length >= 0
+      undoCounterHistory.length < 50
     ) {
       setCounter(counter - latestEntry.addedToCounter);
       // simulates undo functionality - removes latest entry in counter history
