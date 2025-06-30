@@ -2,8 +2,8 @@ import { useRef, useEffect } from "react";
 
 export default function GridCell({
   grabCoordinates,
-  startDragCoordinates,
   id,
+  className,
 }: {
   grabCoordinates: ({
     top,
@@ -22,8 +22,8 @@ export default function GridCell({
     y: number;
     id: number;
   }) => void;
-  startDragCoordinates: number[];
   id: number;
+  className: string;
 }) {
   const gridRef: React.RefObject<null> = useRef(null);
 
@@ -35,23 +35,7 @@ export default function GridCell({
     const x = gridRef.current.getBoundingClientRect().x;
     const y = gridRef.current.getBoundingClientRect().y;
     grabCoordinates({ top, right, bottom, left, x, y, id });
-  }, [startDragCoordinates]);
+  }, []);
 
-  return (
-    <div
-      onClick={() => {
-        const top = gridRef.current.getBoundingClientRect().top;
-        const bottom = gridRef.current.getBoundingClientRect().bottom;
-        const right = gridRef.current.getBoundingClientRect().right;
-        const left = gridRef.current.getBoundingClientRect().left;
-        const x = gridRef.current.getBoundingClientRect().x;
-        const y = gridRef.current.getBoundingClientRect().y;
-        console.log({ top, right, bottom, left, x, y, id });
-      }}
-      ref={gridRef}
-      className="gridCard"
-    >
-      {id}
-    </div>
-  );
+  return <div ref={gridRef} className={`gridCard ${className}`}></div>;
 }

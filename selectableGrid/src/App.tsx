@@ -21,7 +21,7 @@
 // 5. create the area of selection as a box using coordinates
 
 import GridCell from "./GridCell";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export interface IGrid {
   top: number;
@@ -31,70 +31,59 @@ export interface IGrid {
   x: number;
   y: number;
   id: number;
+  selected: string;
 }
 
 export default function App() {
   const [startDragCoordinates, setStartDragCoordinates] = useState<number[]>(
     []
   );
-  const [grid, setGrid] = useState<React.JSX.Element[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [grid, setGrid] = useState<React.JSX.Element[]>(generateGrid());
   const [gridCoordinates, setGridCoordinates] = useState<IGrid[]>(
     Array(100).fill(null)
   );
 
-  function createSelectionBox({ x, y }: { x: number; y: number }) {
-    const xStart = startDragCoordinates[0];
-    const yStart = startDragCoordinates[1];
-    const xEnd = x;
-    const yEnd = y;
-
-    checkForGridSelection({
-      xStart,
-      yStart,
-      xEnd,
-      yEnd,
+  function grabCoordinates({
+    top,
+    right,
+    bottom,
+    left,
+    x,
+    y,
+    id,
+  }: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+    x: number;
+    y: number;
+    id: number;
+  }) {
+    setGridCoordinates((prev) => {
+      const newCoords = [...prev];
+      newCoords[id] = { top, right, bottom, left, x, y, id, selected: "" };
+      return newCoords;
     });
   }
 
-  useEffect(() => {
-    function grabCoordinates({
-      top,
-      right,
-      bottom,
-      left,
-      x,
-      y,
-      id,
-    }: {
-      top: number;
-      right: number;
-      bottom: number;
-      left: number;
-      x: number;
-      y: number;
-      id: number;
-    }) {
-      setGridCoordinates((prev) => {
-        const newCoords = [...prev];
-        newCoords[id] = { top, right, bottom, left, x, y, id };
-        return newCoords;
-      });
-    }
-
+  function generateGrid() {
     const grid = [];
 
     for (let i = 0; i < 100; i++) {
       grid.push(
         <GridCell
+          className=""
           id={i}
           key={i}
           grabCoordinates={grabCoordinates}
-          startDragCoordinates={startDragCoordinates}
         />
       );
     }
-    setGrid(grid);
-  }, [gridCoordinates]);
+
+    return grid;
+  }
 
   function checkForGridSelection({
     xStart,
@@ -112,28 +101,62 @@ export default function App() {
     const yMin = Math.min(yStart, yEnd);
     const yMax = Math.max(yStart, yEnd);
 
-    const findSelectedGrids = gridCoordinates.filter((gridBox) => {
+    const findSelectedGrids = gridCoordinates.map((gridBox) => {
       const fullyContained =
         gridBox.left >= xMin &&
         gridBox.right <= xMax &&
         gridBox.top >= yMin &&
         gridBox.bottom <= yMax;
 
-      console.log(fullyContained ? gridBox.id : "");
-
-      return fullyContained;
+      if (fullyContained) {
+        return { ...gridBox, selected: "selected" };
+      } else {
+        return gridBox;
+      }
     });
-    console.log(findSelectedGrids);
+
+    const updatedGrid = findSelectedGrids.map((gridBox) => {
+      return (
+        <GridCell
+          className={gridBox.selected}
+          id={gridBox.id}
+          key={gridBox.id}
+          grabCoordinates={grabCoordinates}
+        />
+      );
+    });
+
+    setGrid(updatedGrid);
   }
 
   return (
     <div
       className="mainContainer"
       onMouseDown={(e) => {
+        setGrid(generateGrid());
         setStartDragCoordinates([e.clientX, e.clientY]);
+        setIsDragging(true);
+      }}
+      onMouseMove={(e) => {
+        if (isDragging) {
+          console.log("test");
+          checkForGridSelection({
+            xStart: startDragCoordinates[0],
+            yStart: startDragCoordinates[1],
+            xEnd: e.clientX,
+            yEnd: e.clientY,
+          });
+        }
       }}
       onMouseUp={(e) => {
-        createSelectionBox({ x: e.clientX, y: e.clientY });
+        setIsDragging(false);
+        setStartDragCoordinates([...startDragCoordinates, 0]);
+        checkForGridSelection({
+          xStart: startDragCoordinates[0],
+          yStart: startDragCoordinates[1],
+          xEnd: e.clientX,
+          yEnd: e.clientY,
+        });
       }}
     >
       <section className="gridContainer">{grid}</section>
