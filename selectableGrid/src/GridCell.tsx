@@ -10,16 +10,12 @@ export default function GridCell({
     right,
     bottom,
     left,
-    x,
-    y,
     id,
   }: {
     top: number;
     right: number;
     bottom: number;
     left: number;
-    x: number;
-    y: number;
     id: number;
   }) => void;
   id: number;
@@ -33,9 +29,7 @@ export default function GridCell({
       const bottom = gridRef.current.getBoundingClientRect().bottom;
       const right = gridRef.current.getBoundingClientRect().right;
       const left = gridRef.current.getBoundingClientRect().left;
-      const x = gridRef.current.getBoundingClientRect().x;
-      const y = gridRef.current.getBoundingClientRect().y;
-      grabCoordinates({ top, right, bottom, left, x, y, id });
+      grabCoordinates({ top, right, bottom, left, id });
     }
   }, []);
 

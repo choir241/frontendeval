@@ -28,8 +28,6 @@ export interface IGrid {
   right: number;
   bottom: number;
   left: number;
-  x: number;
-  y: number;
   id: number;
   selected: string;
 }
@@ -49,21 +47,17 @@ export default function App() {
     right,
     bottom,
     left,
-    x,
-    y,
     id,
   }: {
     top: number;
     right: number;
     bottom: number;
     left: number;
-    x: number;
-    y: number;
     id: number;
   }) {
     setGridCoordinates((prev) => {
       const newCoords = [...prev];
-      newCoords[id] = { top, right, bottom, left, x, y, id, selected: "" };
+      newCoords[id] = { top, right, bottom, left, id, selected: "" };
       return newCoords;
     });
   }
@@ -139,7 +133,6 @@ export default function App() {
       }}
       onMouseMove={(e) => {
         if (isDragging) {
-          console.log("test");
           checkForGridSelection({
             xStart: startDragCoordinates[0],
             yStart: startDragCoordinates[1],
