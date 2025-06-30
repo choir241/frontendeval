@@ -25,16 +25,18 @@ export default function GridCell({
   id: number;
   className: string;
 }) {
-  const gridRef: React.RefObject<null> = useRef(null);
+  const gridRef: React.RefObject<HTMLDivElement | null> = useRef(null);
 
   useEffect(() => {
-    const top = gridRef.current.getBoundingClientRect().top;
-    const bottom = gridRef.current.getBoundingClientRect().bottom;
-    const right = gridRef.current.getBoundingClientRect().right;
-    const left = gridRef.current.getBoundingClientRect().left;
-    const x = gridRef.current.getBoundingClientRect().x;
-    const y = gridRef.current.getBoundingClientRect().y;
-    grabCoordinates({ top, right, bottom, left, x, y, id });
+    if (gridRef.current) {
+      const top = gridRef.current.getBoundingClientRect().top;
+      const bottom = gridRef.current.getBoundingClientRect().bottom;
+      const right = gridRef.current.getBoundingClientRect().right;
+      const left = gridRef.current.getBoundingClientRect().left;
+      const x = gridRef.current.getBoundingClientRect().x;
+      const y = gridRef.current.getBoundingClientRect().y;
+      grabCoordinates({ top, right, bottom, left, x, y, id });
+    }
   }, []);
 
   return <div ref={gridRef} className={`gridCard ${className}`}></div>;
