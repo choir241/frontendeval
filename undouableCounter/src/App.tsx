@@ -11,7 +11,6 @@
 // Clicking the 'Redo' button should redo the last action the user undid. For example, if the user clicked '+10', clicking undo would subtract 10, then clicking redo would add 10 again
 
 import { useState } from "react";
-import Button from "./Button";
 import CounterHistoryRow from "./CounterHistoryRow";
 import CounterButtonsSection from "./CounterButtonsSection";
 
@@ -75,23 +74,11 @@ export default function App() {
 
   return (
     <>
-      <section className="secondaryButtonContainer">
-        <Button
-          isDisabled={counterHistory.length === 0}
-          onClickEventHandler={() => undoCounterUpdate()}
-          addedToCounter={0}
-          label={"Undo"}
-        />
-        <Button
-          isDisabled={!(undoCounterHistory.length > 0)}
-          onClickEventHandler={() => redoCounterUpdate()}
-          addedToCounter={0}
-          label={"Redo"}
-        />
-      </section>
       <CounterButtonsSection
-      counter = {counter}
-      updateCounter={(e:number)=>updateCounter(e)}
+        undoCounterUpdate={undoCounterUpdate}
+        redoCounterUpdate={redoCounterUpdate}
+        counter={counter}
+        updateCounter={(e: number) => updateCounter(e)}
       />
 
       <div className="flex justifyCenter">
@@ -100,8 +87,8 @@ export default function App() {
             {counterHistory.map((counterHistory, index) => {
               return (
                 <CounterHistoryRow
-                index = {index}
-                counterHistory = {counterHistory}
+                  index={index}
+                  counterHistory={counterHistory}
                 />
               );
             })}

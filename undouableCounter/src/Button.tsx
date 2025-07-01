@@ -1,20 +1,13 @@
 export default function Button({
-  label,
-  onClickEventHandler,
   addedToCounter,
-  isDisabled,
+  onClickEventHandler,
 }: {
-  label: string;
-  onClickEventHandler: (e: number) => void;
   addedToCounter: number;
-  isDisabled: boolean;
+  onClickEventHandler: (e: number) => void;
 }) {
   return (
-    <button
-      onClick={() => onClickEventHandler(addedToCounter)}
-      disabled={isDisabled}
-    >
-      {label}
+    <button onClick={() => onClickEventHandler(addedToCounter)}>
+      {addedToCounter}
     </button>
   );
 }

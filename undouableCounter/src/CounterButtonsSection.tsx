@@ -1,48 +1,34 @@
 import Button from "./Button";
 
-export default function CounterButtonsSection({updateCounter, counter}:{updateCounter:(e:number)=>void, counter: number}) {
+export default function CounterButtonsSection({
+  updateCounter,
+  redoCounterUpdate,
+  undoCounterUpdate,
+  counter,
+}: {
+  updateCounter: (e: number) => void;
+  counter: number;
+  redoCounterUpdate: ()=> void,
+  undoCounterUpdate: ()=> void,
+}) {
   return (
-    <section className="buttonContainer">
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(-100)}
-        addedToCounter={-100}
-        label={"-100"}
-      />
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(-10)}
-        addedToCounter={-10}
-        label={"-10"}
-      />
+    <>
+      <section className="secondaryButtonContainer">
+        <button onClick={() => undoCounterUpdate()}>Undo</button>
+        <button onClick={() => redoCounterUpdate()}>Redo</button>
+      </section>
+      <section className="buttonContainer">
+        <Button onClickEventHandler={updateCounter} addedToCounter={-100} />
+        <Button onClickEventHandler={updateCounter} addedToCounter={-10} />
 
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(-1)}
-        addedToCounter={-1}
-        label={"-1"}
-      />
+        <Button onClickEventHandler={updateCounter} addedToCounter={-1} />
 
-      <span className="count">{counter}</span>
+        <span className="count">{counter}</span>
 
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(1)}
-        addedToCounter={1}
-        label={"+1"}
-      />
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(10)}
-        addedToCounter={10}
-        label={"+10"}
-      />
-      <Button
-        isDisabled={false}
-        onClickEventHandler={() => updateCounter(100)}
-        addedToCounter={100}
-        label={"+100"}
-      />
-    </section>
+        <Button onClickEventHandler={updateCounter} addedToCounter={1} />
+        <Button onClickEventHandler={updateCounter} addedToCounter={10} />
+        <Button onClickEventHandler={updateCounter} addedToCounter={100} />
+      </section>
+    </>
   );
 }
