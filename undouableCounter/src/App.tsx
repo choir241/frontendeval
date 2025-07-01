@@ -12,14 +12,16 @@
 
 import { useState } from "react";
 import Button from "./Button";
+import CounterHistoryRow from "./CounterHistoryRow";
+import CounterButtonsSection from "./CounterButtonsSection";
+
+export interface ICounterHistory {
+  previousValue: number;
+  updatedValue: number;
+  addedToCounter: number;
+}
 
 export default function App() {
-  interface ICounterHistory {
-    previousValue: number;
-    updatedValue: number;
-    addedToCounter: number;
-  }
-
   const [counter, setCounter] = useState(0);
   const [counterHistory, setCounterHistory] = useState<ICounterHistory[]>([]);
   const [undoCounterHistory, setUndoCounterHistory] = useState<
@@ -43,15 +45,11 @@ export default function App() {
   function undoCounterUpdate() {
     const latestEntry = counterHistory[counterHistory.length - 1];
 
-    if (
-      counterHistory.length &&
-      undoCounterHistory.length < 50
-    ) {
+    if (counterHistory.length && undoCounterHistory.length < 50) {
       setCounter(counter - latestEntry.addedToCounter);
       // simulates undo functionality - removes latest entry in counter history
       setCounterHistory(counterHistory.slice(0, counterHistory.length - 1));
       setUndoCounterHistory([...undoCounterHistory, latestEntry]);
-
     }
   }
 
@@ -91,61 +89,20 @@ export default function App() {
           label={"Redo"}
         />
       </section>
-      <section className="buttonContainer">
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(-100)}
-          addedToCounter={-100}
-          label={"-100"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(-10)}
-          addedToCounter={-10}
-          label={"-10"}
-        />
-
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(-1)}
-          addedToCounter={-1}
-          label={"-1"}
-        />
-
-        <span className="count">{counter}</span>
-
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(1)}
-          addedToCounter={1}
-          label={"+1"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(10)}
-          addedToCounter={10}
-          label={"+10"}
-        />
-        <Button
-          isDisabled={false}
-          onClickEventHandler={() => updateCounter(100)}
-          addedToCounter={100}
-          label={"+100"}
-        />
-      </section>
+      <CounterButtonsSection
+      counter = {counter}
+      updateCounter={(e:number)=>updateCounter(e)}
+      />
 
       <div className="flex justifyCenter">
         <div className="counterHistoryContainer">
           <section className="subCounterHistoryContainer">
             {counterHistory.map((counterHistory, index) => {
               return (
-                <div key={index} className="counterHistoryGridBox">
-                  <span>
-                    {counterHistory.addedToCounter > 0 ? "+" : "-"}{" "}
-                    {Math.abs(counterHistory.addedToCounter)}
-                  </span>
-                  <span>{`(${counterHistory.previousValue} -> ${counterHistory.updatedValue})`}</span>
-                </div>
+                <CounterHistoryRow
+                index = {index}
+                counterHistory = {counterHistory}
+                />
               );
             })}
           </section>
