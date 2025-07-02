@@ -4,10 +4,8 @@
 }
 
 .answer {
-  padding-top: 1rem;
   text-indent: 2rem;
   opacity: 70%;
-  padding-bottom: 1rem;
 }
 
 .faqContainer {
@@ -25,7 +23,9 @@ span{
 }
 
 .question{
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0rem 1rem;
   cursor: pointer;
 }
 
