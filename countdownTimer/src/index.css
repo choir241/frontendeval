@@ -1,0 +1,18 @@
+.hidden{
+  display: none;
+}
+
+.flex{
+  display: flex;
+}
+
+.colon{
+  padding: 0rem .25rem;
+}
+
+.countdownContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 30%;
+}
