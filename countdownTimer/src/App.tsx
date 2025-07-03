@@ -10,7 +10,10 @@
 // When the timer reaches zero, if the app has appropriate permissions, it should display a Notification that the timer is complete
 // If the app doesn't have appropriate permissions, it should show an alert when the timer reaches zero
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Input from "./Input";
+import Button from "./Button";
+import Span from "./Span";
 
 export default function App() {
   const [hours, setHours] = useState(0);
@@ -18,26 +21,31 @@ export default function App() {
   const [seconds, setSeconds] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [isPause, setIsPause] = useState(false);
+  const timeOut = useRef(0);
 
   function startTheTimer() {
-    if (hours && !minutes && !seconds) {
-      setMinutes(59);
-      setSeconds(59);
-    } else if (minutes && !seconds) {
-      setSeconds(59);
+    if (
+      seconds <= 60 &&
+      minutes <= 60 &&
+      hours <= 60 &&
+      (hours > 0 || minutes > 0 || seconds > 0)
+    ) {
+      setIsPause(false);
+      setStartTimer(true);
+    } else {
+      alert("Input the correct time formatting");
     }
   }
 
   useEffect(() => {
     if (startTimer && seconds > 0 && !isPause) {
-      setTimeout(() => {
+      timeOut.current = setTimeout(() => {
         setSeconds(seconds - 1);
-        if (hours && minutes === 1 && seconds === 1) {
+        if (hours && minutes === 0 && seconds === 1) {
           setHours(hours - 1);
           setMinutes(59);
           setSeconds(59);
-        }
-        if (seconds === 1 && minutes) {
+        } else if (seconds === 1 && minutes) {
           setMinutes(minutes - 1);
           setSeconds(59);
         }
@@ -49,13 +57,17 @@ export default function App() {
       minutes === 0 &&
       hours === 0
     ) {
+      clearTimeout(timeOut.current);
       alert("Timer is finished!");
       resetTimer();
     }
-  }, [hours, seconds, minutes, startTimer, isPause]);
+  }, [hours, seconds, minutes, startTimer, isPause, timeOut]);
 
   function resetTimer() {
     setStartTimer(false);
+    setIsPause(false);
+    clearTimeout(timeOut.current);
+    timeOut.current = 0;
     setHours(0);
     setMinutes(0);
     setSeconds(0);
@@ -63,89 +75,78 @@ export default function App() {
 
   return (
     <section className="countdownContainer">
-      <input
-        className={`${startTimer ? "hidden" : "flex"}`}
-        type="number"
-        placeholder="HH"
-        minLength={0}
-        maxLength={2}
-        max={60}
-        min={0}
-        onChange={(e) => setHours(Number(e.target.value))}
+      <Input
+        props={{
+          value: hours,
+          className: startTimer ? "hidden" : "flex",
+          inputChangeHandler: setHours,
+          placeholder: "HH",
+        }}
       />
-      <span className={`${startTimer ? "flex" : "hidden"}`}>
-        {hours < 10 ? `${"0" + hours}` : hours}
-      </span>
-      <span className="colon">{":"}</span>
-      <span className={`${startTimer ? "flex" : "hidden"}`}>
-        {minutes < 10 ? `${"0" + minutes}` : minutes}
-      </span>
-      <input
-        className={`${startTimer ? "hidden" : "flex"}`}
-        type="number"
-        placeholder="MM"
-        minLength={0}
-        maxLength={2}
-        max={60}
-        min={0}
-        onChange={(e) => setMinutes(Number(e.target.value))}
+      <Span
+        props={{
+          className: `${startTimer ? "flex" : "hidden"}`,
+          label: `${hours < 10 ? `${"0" + hours}` : hours}`,
+        }}
       />
-      <span className="colon">{":"}</span>
-      <span className={`${startTimer ? "flex" : "hidden"}`}>
-        {seconds < 10 ? `${"0" + seconds}` : seconds}
-      </span>
 
-      <input
-        className={`${startTimer ? "hidden" : "flex"}`}
-        type="number"
-        placeholder="SS"
-        minLength={0}
-        maxLength={2}
-        max={60}
-        min={0}
-        onChange={(e) => setSeconds(Number(e.target.value))}
+      <Span props={{ className: "colon", label: ":" }} />
+
+      <Span
+        props={{
+          className: `${startTimer ? "flex" : "hidden"}`,
+          label: `${minutes < 10 ? `${"0" + minutes}` : minutes}`,
+        }}
+      />
+
+      <Input
+        props={{
+          value: minutes,
+          className: startTimer ? "hidden" : "flex",
+          inputChangeHandler: setMinutes,
+          placeholder: "MM",
+        }}
+      />
+      <Span props={{ className: "colon", label: ":" }} />
+
+      <Span
+        props={{
+          className: `${startTimer ? "flex" : "hidden"}`,
+          label: `${seconds < 10 ? `${"0" + seconds}` : seconds}`,
+        }}
+      />
+
+      <Input
+        props={{
+          value: seconds, 
+          className: startTimer ? "hidden" : "flex",
+          inputChangeHandler: setSeconds,
+          placeholder: "SS",
+        }}
       />
 
       {!isPause && startTimer ? (
-        <button
-          onClick={() => setIsPause(true)}
-          className={`${startTimer ? "flex" : "hidden"}`}
-        >
-          Pause
-        </button>
-      ) : (
-        <button
-          className={isPause || !startTimer ? "flex" : "hidden"}
-          onClick={() => {
-            if (
-              (seconds.toString().length < 3 &&
-                minutes.toString().length < 3 &&
-                hours.toString().length < 3 &&
-                hours > 0) ||
-              minutes > 0 ||
-              seconds > 0
-            ) {
-              if (!startTimer) {
-                startTheTimer();
-              }
-
-              setIsPause(false);
-              setStartTimer(true);
-            } else {
-              alert("Input the correct time formatting");
-            }
+        <Button
+          onClickEventHandler={() => {
+            setIsPause(true);
+            clearTimeout(timeOut.current);
           }}
-        >
-          Start
-        </button>
+          className={startTimer ? "flex" : "hidden"}
+          label="Pause"
+        />
+      ) : (
+        <Button
+          onClickEventHandler={() => startTheTimer()}
+          className={isPause || !startTimer ? "flex" : "hidden"}
+          label="Start"
+        />
       )}
 
-      <button
+      <Button
         className={`${startTimer ? "flex" : "hidden"}`}
-        onClick={() => resetTimer()}
-      >
-        Reset
-      </button>
+        onClickEventHandler={() => resetTimer()}
+        label="Reset"
+      />
     </section>
   );
 }
