@@ -12,10 +12,10 @@ export default function FAQCard({
 
   return (
     <article className="faq">
-      <section className="question" onClick={() => setIsRevealed(!isRevealed)}>
+      <button className="question" onClick={() => setIsRevealed(!isRevealed)}>
         {isRevealed ? <span>&#x25BC;</span> : <span>&#x25BA;</span>}
         <p>{FAQAndAnswers.question}</p>
-      </section>
+      </button>
 
       {isRevealed ? (
         <section className="answer"><p>{FAQAndAnswers.answer}</p></section>
