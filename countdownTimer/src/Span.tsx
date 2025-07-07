@@ -3,10 +3,6 @@ interface ISpan {
   label: string | number;
 }
 
-export default function Span({props}:{props: ISpan}) {
-  return (
-    <span className={props.className}>
-      {props.label}
-    </span>
-  );
+export default function Span({ props }: { props: ISpan }) {
+  return <span className={props.className}>{props.label}</span>;
 }

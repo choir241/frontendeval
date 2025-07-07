@@ -34,12 +34,12 @@ export interface IGrid {
 
 export default function App() {
   const [startDragCoordinates, setStartDragCoordinates] = useState<number[]>(
-    []
+    [],
   );
   const [isDragging, setIsDragging] = useState(false);
   const [grid, setGrid] = useState<React.JSX.Element[]>(generateGrid());
   const [gridCoordinates, setGridCoordinates] = useState<IGrid[]>(
-    Array(100).fill(null)
+    Array(100).fill(null),
   );
 
   function grabCoordinates({
@@ -72,7 +72,7 @@ export default function App() {
           id={i}
           key={i}
           grabCoordinates={grabCoordinates}
-        />
+        />,
       );
     }
 

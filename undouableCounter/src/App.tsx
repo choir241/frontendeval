@@ -67,7 +67,7 @@ export default function App() {
         },
       ]);
       setUndoCounterHistory(
-        undoCounterHistory.slice(0, undoCounterHistory.length - 1)
+        undoCounterHistory.slice(0, undoCounterHistory.length - 1),
       );
     }
   }
@@ -82,7 +82,7 @@ export default function App() {
       />
 
       <div className="flex justifyCenter">
-          <CounterHistory counterHistory={counterHistory}/>
+        <CounterHistory counterHistory={counterHistory} />
       </div>
     </>
   );

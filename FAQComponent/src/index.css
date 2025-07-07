@@ -14,15 +14,15 @@
   align-items: center;
 }
 
-.faqSubContainer{
+.faqSubContainer {
   width: 50%;
 }
 
-span{
+span {
   padding-right: 1rem;
 }
 
-.question{
+.question {
   border: none;
   background: none;
   display: flex;
@@ -31,6 +31,6 @@ span{
   cursor: pointer;
 }
 
-.question:hover{
-  background: rgb(122, 88, 88, .50);
+.question:hover {
+  background: rgb(122, 88, 88, 0.5);
 }

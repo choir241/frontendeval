@@ -1,16 +1,16 @@
-.hidden{
+.hidden {
   display: none;
 }
 
-.flex{
+.flex {
   display: flex;
 }
 
-.colon{
-  padding: 0rem .25rem;
+.colon {
+  padding: 0rem 0.25rem;
 }
 
-.countdownContainer{
+.countdownContainer {
   display: flex;
   align-items: center;
   justify-content: space-around;

@@ -18,7 +18,9 @@ export default function FAQCard({
       </button>
 
       {isRevealed ? (
-        <section className="answer"><p>{FAQAndAnswers.answer}</p></section>
+        <section className="answer">
+          <p>{FAQAndAnswers.answer}</p>
+        </section>
       ) : (
         ""
       )}

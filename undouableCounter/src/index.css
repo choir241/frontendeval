@@ -1,8 +1,8 @@
-.flex{
- display: flex;
-} 
+.flex {
+  display: flex;
+}
 
-.justifyCenter{
+.justifyCenter {
   justify-content: center;
 }
 
@@ -11,7 +11,7 @@
   max-height: 300px;
   margin-top: 4rem;
   overflow-y: scroll;
-    border: 1px solid black;
+  border: 1px solid black;
 }
 
 .subCounterHistoryContainer {
