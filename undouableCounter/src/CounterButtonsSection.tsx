@@ -1,4 +1,4 @@
-import Button from "./Button";
+import CounterButton from "./CounterButton";
 
 export default function CounterButtonsSection({
   updateCounter,
@@ -18,16 +18,16 @@ export default function CounterButtonsSection({
         <button onClick={() => redoCounterUpdate()}>Redo</button>
       </section>
       <section className="buttonContainer">
-        <Button onClickEventHandler={updateCounter} addedToCounter={-100} />
-        <Button onClickEventHandler={updateCounter} addedToCounter={-10} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={-100} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={-10} />
 
-        <Button onClickEventHandler={updateCounter} addedToCounter={-1} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={-1} />
 
         <span className="count">{counter}</span>
 
-        <Button onClickEventHandler={updateCounter} addedToCounter={1} />
-        <Button onClickEventHandler={updateCounter} addedToCounter={10} />
-        <Button onClickEventHandler={updateCounter} addedToCounter={100} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={1} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={10} />
+        <CounterButton onClickEventHandler={updateCounter} addedToCounter={100} />
       </section>
     </>
   );

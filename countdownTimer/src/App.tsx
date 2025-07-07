@@ -118,7 +118,7 @@ export default function App() {
 
       <Input
         props={{
-          value: seconds, 
+          value: seconds,
           className: startTimer ? "hidden" : "flex",
           inputChangeHandler: setSeconds,
           placeholder: "SS",
