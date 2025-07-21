@@ -1,0 +1,23 @@
+.emptyBox{
+  border: 1px solid black;
+  width: 100px;
+  height: 100px;
+}
+
+.row{
+  display: flex;
+}
+
+.dropButton{
+  display: flex;
+  flex-direction: column;
+}
+
+/* is the column full?
+/* how do we check if column is full
+/* if everything in column is a value
+
+/* if column is not full, we go to last
+row
+
+/* and add a value according to turn value
