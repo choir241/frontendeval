@@ -32,7 +32,6 @@
 // ];
 
 // const winner = window.connectFour.checkForWinner(exampleBoard);
-// console.log(winner); // 1
 
 // If you're using React, we have provided a separate utility to make a deep copy of an array/object. You may find this useful if you store the board in React state. Example usage:
 // const clonedBoard = window.connectFour.deepClone(board);
@@ -44,9 +43,20 @@ import { useState } from "react";
 //3. click drop button should drop token to bottom most free position
 //4. clicking drop button on full column does nothing
 
+// is the column full?
+// how do we check if column is full
+// if everything in column is a value
+
+// if column is not full, we go to last
+// row
+
+//and add a value according to turn value
+//
+
 window.connectFour = {
   deepClone: (arr) => JSON.parse(JSON.stringify(arr)),
   checkForWinner: (board) => {
+    const NUM_IN_ROW_WIN = 4;
     const checkVerticalWinner = (board) => {
       for (let x = 0; x < board.length; x++) {
         let maxNumInRow = 1;
@@ -163,34 +173,49 @@ export default function App() {
         }
       });
     });
-    const checkForFullColumn = column.every((colElement)=>colElement);
+    const checkForFullColumn = column.every((colElement) => colElement);
 
-    if(checkForFullColumn){
-      console.log('column is full');
+    if (checkForFullColumn) {
       return;
     }
 
-    console.log('column is not full')
     let rowId = 6;
-    for(let i = column.length-1; i >=0; i--){
-      if(!column[i]){
+    for (let i = column.length - 1; i >= 0; i--) {
+      if (!column[i]) {
         rowId = i;
         break;
       }
     }
-    const addToken = board.map((col, index)=>{
+    const addToken = board.map((col, index) => {
       let row = [];
-      for(let i = 0; i < col.length; i++){
-        if(index === rowId && i === colId && (turn === 1 || turn === 2)){
+      for (let i = 0; i < col.length; i++) {
+        if (index === rowId && i === colId && (turn === 1 || turn === 2)) {
           row.push(turn);
-        }else{
-          row.push(col[i])
+        } else {
+          row.push(col[i]);
         }
       }
-      return row
-    })
+      return row;
+    });
 
     setBoard(addToken);
+
+    if (window.connectFour.checkForWinner(addToken) === 2) {
+      setWinner(2);
+      return;
+    } else if (window.connectFour.checkForWinner(addToken) === 1) {
+      setWinner(1);
+      return;
+    }else if(window.connectFour.checkForWinner(addToken)){
+      setWinner();
+      return;
+    }
+
+    if (turn === 1) {
+      setTurn(2);
+    } else if (turn === 2) {
+      setTurn(1);
+    }
   }
 
   function renderBoard() {
@@ -201,21 +226,33 @@ export default function App() {
             if (i === 0 && box === null) {
               return (
                 <div key={`empty-${index}`} className="dropButton">
-                  <button onClick={() => dropToken(index)}>Drop</button>
+                  {winner!==0 ? (
+                    ""
+                  ) : (
+                    <button onClick={() => dropToken(index)}>Drop</button>
+                  )}
                   <div className="emptyBox"></div>
                 </div>
               );
             } else if (i === 0 && box === 1) {
               return (
                 <div key={`red-${index}`} className="dropButton">
-                  <button onClick={() => dropToken(index)}>Drop</button>
+                  {winner!==0 ? (
+                    ""
+                  ) : (
+                    <button onClick={() => dropToken(index)}>Drop</button>
+                  )}
                   <div className="red"></div>
                 </div>
               );
             } else if (i === 0 && box === 2) {
               return (
                 <div key={`yellow-${index}`} className="dropButton">
-                  <button onClick={() => dropToken(index)}>Drop</button>
+                  {winner!==0 ? (
+                    ""
+                  ) : (
+                    <button onClick={() => dropToken(index)}>Drop</button>
+                  )}{" "}
                   <div key={`yellow-${index}`} className="yellow"></div>
                 </div>
               );
@@ -234,6 +271,31 @@ export default function App() {
 
   const [board, setBoard] = useState(clonedBoard);
   const [turn, setTurn] = useState(1);
+  const [winner, setWinner] = useState(0);
 
-  return <>{renderBoard()}</>;
+  function determineWinner() {
+
+    if (turn === 1 && winner === 0) {
+      return "Red's turn";
+    } else if (turn === 2 && winner === 0) {
+      return "Yellow's turn";
+    } else if (winner === 1) {
+      return "Red won!";
+    } else if (winner === 2) {
+      return "Yellow won!";
+    } else if (winner !== 0) {
+      return "Draw!";
+    }
+  }
+
+  return (
+    <>
+      {winner !== 0 ? <button onClick={() => {setBoard(boardExample) 
+        setWinner(0)
+      }}>Play again</button> : ""}
+      {determineWinner()}
+
+      {renderBoard()}
+    </>
+  );
 }

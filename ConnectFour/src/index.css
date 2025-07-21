@@ -13,11 +13,16 @@
   flex-direction: column;
 }
 
-/* is the column full?
-/* how do we check if column is full
-/* if everything in column is a value
+.red{
+  border: 1px solid black;
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
 
-/* if column is not full, we go to last
-row
-
-/* and add a value according to turn value
+.yellow{
+  border: 1px solid black;
+  width: 100px;
+  height: 100px;
+  background-color: yellow;
+}
