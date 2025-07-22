@@ -4,8 +4,14 @@
   height: 100px;
 }
 
-.row{
+.column{
   display: flex;
+  flex-direction: column;
+}
+
+.board{
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .dropButton{
@@ -17,12 +23,25 @@
   border: 1px solid black;
   width: 100px;
   height: 100px;
-  background-color: red;
+}
+
+.red .token, .yellow .token{
+  border: 1px solid black;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.red .token{
+    background-color: red;
+}
+
+.yellow .token{
+    background-color: yellow;
 }
 
 .yellow{
   border: 1px solid black;
   width: 100px;
   height: 100px;
-  background-color: yellow;
 }

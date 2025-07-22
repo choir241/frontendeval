@@ -36,8 +36,6 @@
 // If you're using React, we have provided a separate utility to make a deep copy of an array/object. You may find this useful if you store the board in React state. Example usage:
 // const clonedBoard = window.connectFour.deepClone(board);
 
-import { useState } from "react";
-
 //1. render the UI board with the drop buttons
 //2. alternate between player one and two (red and yellow)
 //3. click drop button should drop token to bottom most free position
@@ -53,11 +51,21 @@ import { useState } from "react";
 //and add a value according to turn value
 //
 
+import { useState } from "react";
+// import { determineWinner } from "./determineWinner";
+import TokenBoxCard from "./TokenBoxCard.tsx";
+
+declare global {
+  interface Window {
+    connectFour: any;
+  }
+}
+
 window.connectFour = {
-  deepClone: (arr) => JSON.parse(JSON.stringify(arr)),
-  checkForWinner: (board) => {
+  deepClone: (arr: null[] | number[]) => JSON.parse(JSON.stringify(arr)),
+  checkForWinner: (board: null[][] | number[][]) => {
     const NUM_IN_ROW_WIN = 4;
-    const checkVerticalWinner = (board) => {
+    const checkVerticalWinner = (board: number[][] | null[][]) => {
       for (let x = 0; x < board.length; x++) {
         let maxNumInRow = 1;
         let lastToken = board[x][0];
@@ -78,7 +86,7 @@ window.connectFour = {
       return null;
     };
 
-    const checkHorizontalWinner = (board) => {
+    const checkHorizontalWinner = (board: number[][] | null[][]) => {
       for (let y = 0; y < board[0].length; y++) {
         let maxNumInRow = 1;
         let lastToken = board[0][y];
@@ -99,7 +107,7 @@ window.connectFour = {
       return null;
     };
 
-    const checkDiagonalWinner = (board) => {
+    const checkDiagonalWinner = (board: number[][] | null[][]) => {
       for (let x = 0; x < board.length; x++) {
         for (let y = 0; y < board[x].length; y++) {
           const currentToken = board[x][y];
@@ -126,9 +134,9 @@ window.connectFour = {
 
     let hasEmptySpace = false;
     board.forEach(
-      (row) =>
+      (row: any) =>
         (hasEmptySpace =
-          hasEmptySpace || row.findIndex((cell) => cell === null) >= 0)
+          hasEmptySpace || row.findIndex((cell: null) => cell === null) >= 0)
     );
     if (!hasEmptySpace) {
       return "draw";
@@ -141,19 +149,9 @@ window.connectFour = {
   },
 };
 
-// const boardExample = [
-//   [1,2,null,null,null,null],
-//   [1,1,1,1,null,null], // player `1` has 4 in a row
-//   [2,null,null,null,null,null],
-//   [2,null,null,null,null,null],
-//   [2,null,null,null,null,null],
-//   [2,null,null,null,null,null],
-//   [1,null,null,null,null,null]
-// ];
-
 export default function App() {
   const boardExample = [
-    [null, null, null, null, null, null],
+    [0, 1, 2, 1, 1, 2],
     [null, null, null, null, null, null],
     [null, null, null, null, null, null],
     [null, null, null, null, null, null],
@@ -161,141 +159,121 @@ export default function App() {
     [null, null, null, null, null, null],
     [null, null, null, null, null, null],
   ];
-
   const clonedBoard = window.connectFour.deepClone(boardExample);
 
-  function dropToken(colId) {
-    const column = [];
-    board.forEach((row) => {
-      row.forEach((rowElement, i) => {
-        if (colId === i) {
-          column.push(rowElement);
-        }
-      });
-    });
-    const checkForFullColumn = column.every((colElement) => colElement);
+ function dropToken(colId: number) {
 
-    if (checkForFullColumn) {
+    const isColumnFull = board[colId].every(
+      (colElement: number | null) => colElement !== null
+    );
+    if(isColumnFull){
       return;
     }
 
-    let rowId = 6;
-    for (let i = column.length - 1; i >= 0; i--) {
-      if (!column[i]) {
-        rowId = i;
+    for(let i = 0; i < board[colId].length; i++){
+      if(board[colId][i] == null && turn == 1){
+        board[colId][i] = 1
+        break;
+      }else if(board[colId][i] == null && turn == 2){
+        board[colId][i] = 2
         break;
       }
     }
-    const addToken = board.map((col, index) => {
-      let row = [];
-      for (let i = 0; i < col.length; i++) {
-        if (index === rowId && i === colId && (turn === 1 || turn === 2)) {
-          row.push(turn);
-        } else {
-          row.push(col[i]);
-        }
-      }
-      return row;
-    });
 
-    setBoard(addToken);
-
-    if (window.connectFour.checkForWinner(addToken) === 2) {
-      setWinner(2);
-      return;
-    } else if (window.connectFour.checkForWinner(addToken) === 1) {
-      setWinner(1);
-      return;
-    }else if(window.connectFour.checkForWinner(addToken)){
-      setWinner();
-      return;
-    }
-
-    if (turn === 1) {
-      setTurn(2);
-    } else if (turn === 2) {
-      setTurn(1);
-    }
   }
 
   function renderBoard() {
-    return board.map((col, i) => {
+    //each row of the array is a column, not a row
+    return board.map((board: number[] | null[], colI: number) => {
       return (
-        <section className="row" key={i}>
-          {col.map((box, index) => {
-            if (i === 0 && box === null) {
+        <section className="column" key={colI}>
+          {board.map((box: number | null, rowI: number) => {
+            if (rowI === 0 && box === null) {
               return (
-                <div key={`empty-${index}`} className="dropButton">
-                  {winner!==0 ? (
+                <div key={`empty-${rowI}`}>
+                  {winner !== 0 ? (
                     ""
                   ) : (
-                    <button onClick={() => dropToken(index)}>Drop</button>
+                    <button key={rowI} onClick={() => dropToken(colI)}>
+                      Drop
+                    </button>
                   )}
-                  <div className="emptyBox"></div>
+                  <TokenBoxCard className="emptyBox" isToken={false} />
                 </div>
               );
-            } else if (i === 0 && box === 1) {
+            } else if (rowI === 0 && box === 1) {
               return (
-                <div key={`red-${index}`} className="dropButton">
-                  {winner!==0 ? (
+                <div key={`red-${rowI}`} className="dropButton">
+                  {winner !== 0 ? (
                     ""
                   ) : (
-                    <button onClick={() => dropToken(index)}>Drop</button>
+                    <button onClick={() => dropToken(colI)}>Drop</button>
                   )}
                   <div className="red"></div>
                 </div>
               );
-            } else if (i === 0 && box === 2) {
+            } else if (rowI === 0 && box === 2) {
               return (
-                <div key={`yellow-${index}`} className="dropButton">
-                  {winner!==0 ? (
+                <div key={`yellow-${rowI}`} className="dropButton">
+                  {winner !== 0 ? (
                     ""
                   ) : (
-                    <button onClick={() => dropToken(index)}>Drop</button>
+                    <button onClick={() => dropToken(colI)}>Drop</button>
                   )}{" "}
-                  <div key={`yellow-${index}`} className="yellow"></div>
+                  <div key={`yellow-${rowI}`} className="yellow"></div>
                 </div>
               );
+            } else if (turn === 1) {
+              return (
+                <TokenBoxCard
+                  key={`red-${rowI}`}
+                  className="red"
+                  isToken={false}
+                />
+              );
+            } else if (turn === 2) {
+              return (
+                <TokenBoxCard
+                  key={`yellow-${rowI}`}
+                  className="yellow"
+                  isToken={false}
+                />
+              );
             } else if (box === null) {
-              return <div key={`empty-${index}`} className="emptyBox"></div>;
-            } else if (box === 1) {
-              return <div key={`red-${index}`} className="red"></div>;
-            } else if (box === 2) {
-              return <div key={`yellow-${index}`} className="yellow"></div>;
+              return (
+                <TokenBoxCard
+                  key={`empty-${rowI}`}
+                  className="emptyBox"
+                  isToken={false}
+                />
+              );
             }
           })}
         </section>
       );
     });
   }
-
   const [board, setBoard] = useState(clonedBoard);
   const [turn, setTurn] = useState(1);
-  const [winner, setWinner] = useState(0);
-
-  function determineWinner() {
-
-    if (turn === 1 && winner === 0) {
-      return "Red's turn";
-    } else if (turn === 2 && winner === 0) {
-      return "Yellow's turn";
-    } else if (winner === 1) {
-      return "Red won!";
-    } else if (winner === 2) {
-      return "Yellow won!";
-    } else if (winner !== 0) {
-      return "Draw!";
-    }
-  }
+  const [winner, setWinner] = useState<null | number>(0);
 
   return (
     <>
-      {winner !== 0 ? <button onClick={() => {setBoard(boardExample) 
-        setWinner(0)
-      }}>Play again</button> : ""}
-      {determineWinner()}
+      {/* {winner !== 0 ? (
+        <button
+          onClick={() => {
+            setBoard(boardExample);
+            setWinner(0);
+          }}
+        >
+          Play again
+        </button>
+      ) : (
+        ""
+      )}
+      {determineWinner({ turn, winner })} */}
 
-      {renderBoard()}
+      <section className="board">{renderBoard()}</section>
     </>
   );
 }
