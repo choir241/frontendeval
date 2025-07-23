@@ -52,9 +52,9 @@
 //
 
 import { useState } from "react";
-// import { determineWinner } from "./determineWinner";
 import TokenBoxCard from "./TokenBoxCard.tsx";
-
+import Button from "./Button.tsx";
+import { determineWinner } from "./determineWinner.ts";
 declare global {
   interface Window {
     connectFour: any;
@@ -151,7 +151,7 @@ window.connectFour = {
 
 export default function App() {
   const boardExample = [
-    [0, 1, 2, 1, 1, 2],
+    [null, null, null, null, null, null],
     [null, null, null, null, null, null],
     [null, null, null, null, null, null],
     [null, null, null, null, null, null],
@@ -161,25 +161,40 @@ export default function App() {
   ];
   const clonedBoard = window.connectFour.deepClone(boardExample);
 
- function dropToken(colId: number) {
+  const [board, setBoard] = useState(clonedBoard);
+  const [turn, setTurn] = useState(1);
+  const [winner, setWinner] = useState<null | number | string>(null);
 
-    const isColumnFull = board[colId].every(
+    function dropToken(colId: number) {
+    const deepClone = window.connectFour.deepClone(board);
+
+    const column = deepClone[colId];
+
+    const isColumnFull = column.every(
       (colElement: number | null) => colElement !== null
     );
-    if(isColumnFull){
+    if (isColumnFull) {
       return;
     }
 
-    for(let i = 0; i < board[colId].length; i++){
-      if(board[colId][i] == null && turn == 1){
-        board[colId][i] = 1
+    for (let i = 0; i < column.length; i++) {
+      if (column[i] == null && turn == 1) {
+        column[i] = 1;
+        setTurn(2);
         break;
-      }else if(board[colId][i] == null && turn == 2){
-        board[colId][i] = 2
+      } else if (column[i] == null && turn == 2) {
+        column[i] = 2;
+        setTurn(1);
         break;
       }
     }
 
+    const checkForWinner = window.connectFour.checkForWinner(deepClone);
+    if (checkForWinner) {
+      setWinner(checkForWinner);
+    }
+
+    setBoard(deepClone);
   }
 
   function renderBoard() {
@@ -188,63 +203,30 @@ export default function App() {
       return (
         <section className="column" key={colI}>
           {board.map((box: number | null, rowI: number) => {
-            if (rowI === 0 && box === null) {
+            if (rowI === board.length - 1) {
               return (
                 <div key={`empty-${rowI}`}>
-                  {winner !== 0 ? (
+                  {winner !== null ? (
                     ""
                   ) : (
-                    <button key={rowI} onClick={() => dropToken(colI)}>
-                      Drop
-                    </button>
+                    <Button onClick={() => dropToken(colI)} label={"Drop"} />
                   )}
-                  <TokenBoxCard className="emptyBox" isToken={false} />
+                  <TokenBoxCard
+                    className={
+                      box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
+                    }
+                    isToken={box === 1 || box === 2}
+                  />
                 </div>
               );
-            } else if (rowI === 0 && box === 1) {
-              return (
-                <div key={`red-${rowI}`} className="dropButton">
-                  {winner !== 0 ? (
-                    ""
-                  ) : (
-                    <button onClick={() => dropToken(colI)}>Drop</button>
-                  )}
-                  <div className="red"></div>
-                </div>
-              );
-            } else if (rowI === 0 && box === 2) {
-              return (
-                <div key={`yellow-${rowI}`} className="dropButton">
-                  {winner !== 0 ? (
-                    ""
-                  ) : (
-                    <button onClick={() => dropToken(colI)}>Drop</button>
-                  )}{" "}
-                  <div key={`yellow-${rowI}`} className="yellow"></div>
-                </div>
-              );
-            } else if (turn === 1) {
+            } else {
               return (
                 <TokenBoxCard
-                  key={`red-${rowI}`}
-                  className="red"
-                  isToken={false}
-                />
-              );
-            } else if (turn === 2) {
-              return (
-                <TokenBoxCard
-                  key={`yellow-${rowI}`}
-                  className="yellow"
-                  isToken={false}
-                />
-              );
-            } else if (box === null) {
-              return (
-                <TokenBoxCard
-                  key={`empty-${rowI}`}
-                  className="emptyBox"
-                  isToken={false}
+                  key={`token-${rowI}`}
+                  className={
+                    box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
+                  }
+                  isToken={box === 1 || box === 2}
                 />
               );
             }
@@ -253,27 +235,25 @@ export default function App() {
       );
     });
   }
-  const [board, setBoard] = useState(clonedBoard);
-  const [turn, setTurn] = useState(1);
-  const [winner, setWinner] = useState<null | number>(0);
-
   return (
-    <>
-      {/* {winner !== 0 ? (
-        <button
+    <section className="game">
+
+      <span>{determineWinner({ winner })}</span>
+      
+      <span>{!winner ? turn === 1 ? "Red's turn" : "Yellow's turn" : ""} </span>
+      {winner !== null ? (
+        <Button
+          className="playAgain"
           onClick={() => {
-            setBoard(boardExample);
-            setWinner(0);
+            setBoard(clonedBoard);
+            setWinner(null);
           }}
-        >
-          Play again
-        </button>
+          label={"Play Again"}
+        />
       ) : (
         ""
       )}
-      {determineWinner({ turn, winner })} */}
-
       <section className="board">{renderBoard()}</section>
-    </>
+    </section>
   );
 }
