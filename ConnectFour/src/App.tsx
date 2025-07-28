@@ -51,10 +51,10 @@
 //and add a value according to turn value
 //
 
-import { useState } from "react";
-import TokenBoxCard from "./TokenBoxCard.tsx";
-import Button from "./Button.tsx";
-import { determineWinner } from "./determineWinner.ts";
+import { useState, useEffect } from "react";
+import { determineWinner } from "./determineWinner";
+import Board from "./Board";
+
 declare global {
   interface Window {
     connectFour: any;
@@ -165,95 +165,38 @@ export default function App() {
   const [turn, setTurn] = useState("red");
   const [winner, setWinner] = useState<null | number | string>(null);
 
-    function dropToken(colId: number) {
-    const deepClone = window.connectFour.deepClone(board);
-
-    const column = deepClone[colId];
-
-    const isColumnFull = column.every(
-      (colElement: number | null) => colElement !== null
-    );
-    if (isColumnFull) {
-      return;
-    }
-
-    for (let i = 0; i < column.length; i++) {
-      if (column[i] == null && turn == "red") {
-        column[i] = 1;
-        setTurn("yellow");
-        break;
-      } else if (column[i] == null && turn == "yellow") {
-        column[i] = 2;
-        setTurn("red");
-        break;
-      }
-    }
-
-    const checkForWinner = window.connectFour.checkForWinner(deepClone);
+  useEffect(()=>{
+    const checkForWinner = window.connectFour.checkForWinner(board);
+    
     if (checkForWinner) {
       setWinner(checkForWinner);
     }
+  },[board]);
 
-    setBoard(deepClone);
+  function updateTurn(turn: string){
+    setTurn(turn);
   }
 
-  function renderBoard() {
-    //each row of the array is a column, not a row
-    return board.map((board: number[] | null[], colI: number) => {
-      return (
-        <section className="column" key={colI}>
-          {board.map((box: number | null, rowI: number) => {
-            if (rowI === board.length - 1) {
-              return (
-                <div key={`empty-${rowI}`}>
-                  {winner !== null ? (
-                    ""
-                  ) : (
-                    <Button onClick={() => dropToken(colI)} label={"Drop"} />
-                  )}
-                  <TokenBoxCard
-                    className={
-                      box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
-                    }
-                    isToken={(box === 1 ? "red" : "") || (box === 2 ? "yellow" : "")}
-                  />
-                </div>
-              );
-            } else {
-              return (
-                <TokenBoxCard
-                  key={`token-${rowI}`}
-                  className={
-                    box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
-                  }
-                    isToken={(box === 1 ? "red" : "") || (box === 2 ? "yellow" : "")}
-                />
-              );
-            }
-          })}
-        </section>
-      );
-    });
+  function updateBoard(board: null[][] | number[][]){
+    setBoard(board);
   }
+
   return (
     <section className="game">
-
       <span>{determineWinner({ winner })}</span>
-      
-      <span>{!winner ? turn === "red" ? "Red's turn" : "Yellow's turn" : ""} </span>
+
+      <span>
+        {!winner ? (turn === "red" ? "Red's turn" : "Yellow's turn") : ""}{" "}
+      </span>
       {winner !== null ? (
-        <Button
-          className="playAgain"
-          onClick={() => {
+        <button className="playAgain" onClick={() => {
             setBoard(clonedBoard);
             setWinner(null);
-          }}
-          label={"Play Again"}
-        />
+          }}>Play Again</button>
       ) : (
         ""
       )}
-      <section className="board">{renderBoard()}</section>
+      <section className="board"><Board updateBoard = {updateBoard} turn = {turn} updateTurn = {updateTurn} board={board} winner={winner}/></section>
     </section>
   );
 }
