@@ -162,7 +162,7 @@ export default function App() {
   const clonedBoard = window.connectFour.deepClone(boardExample);
 
   const [board, setBoard] = useState(clonedBoard);
-  const [turn, setTurn] = useState(1);
+  const [turn, setTurn] = useState("red");
   const [winner, setWinner] = useState<null | number | string>(null);
 
     function dropToken(colId: number) {
@@ -178,13 +178,13 @@ export default function App() {
     }
 
     for (let i = 0; i < column.length; i++) {
-      if (column[i] == null && turn == 1) {
+      if (column[i] == null && turn == "red") {
         column[i] = 1;
-        setTurn(2);
+        setTurn("yellow");
         break;
-      } else if (column[i] == null && turn == 2) {
+      } else if (column[i] == null && turn == "yellow") {
         column[i] = 2;
-        setTurn(1);
+        setTurn("red");
         break;
       }
     }
@@ -215,7 +215,7 @@ export default function App() {
                     className={
                       box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
                     }
-                    isToken={box === 1 || box === 2}
+                    isToken={(box === 1 ? "red" : "") || (box === 2 ? "yellow" : "")}
                   />
                 </div>
               );
@@ -226,7 +226,7 @@ export default function App() {
                   className={
                     box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
                   }
-                  isToken={box === 1 || box === 2}
+                    isToken={(box === 1 ? "red" : "") || (box === 2 ? "yellow" : "")}
                 />
               );
             }
@@ -240,7 +240,7 @@ export default function App() {
 
       <span>{determineWinner({ winner })}</span>
       
-      <span>{!winner ? turn === 1 ? "Red's turn" : "Yellow's turn" : ""} </span>
+      <span>{!winner ? turn === "red" ? "Red's turn" : "Yellow's turn" : ""} </span>
       {winner !== null ? (
         <Button
           className="playAgain"

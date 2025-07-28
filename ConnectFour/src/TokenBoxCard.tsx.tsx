@@ -3,11 +3,11 @@ export default function TokenBoxCard({
   isToken,
 }: {
   className: string;
-  isToken: boolean;
+  isToken: string;
 }) {
   return (
     <div className={className}>
-      {isToken ? <div className="token"></div> : ""}
+      {isToken === "yellow" || isToken === "red" ? <div className="token"></div> : ""}
     </div>
   );
 }
