@@ -204,3 +204,7 @@ span {
 body {
   margin: 1rem 0rem;
 }
+
+.game span + span {
+  text-transform: capitalize;
+}

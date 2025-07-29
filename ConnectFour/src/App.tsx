@@ -186,9 +186,7 @@ export default function App() {
     <section className="game">
       <span>{determineWinner({ winner })}</span>
 
-      <span>
-        {!winner ? (turn === "red" ? "Red's turn" : "Yellow's turn") : ""}{" "}
-      </span>
+      <span>{!winner ? `${turn + "'s turn"}` : ""} </span>
       {winner !== null ? (
         <button
           className="playAgain"

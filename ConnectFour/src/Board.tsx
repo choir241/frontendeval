@@ -10,12 +10,13 @@ export default function Board({ board }: { board: null[][] | number[][] }) {
     return (
       <section className="column" key={colI}>
         {col.map((box: number | null, rowI: number) => {
+          const checkIsFirstRow = rowI === col.length - 1;
           return (
             <DropTokenButtonProvider.Provider
               key={rowI}
               value={{ deepClone, column }}
             >
-              <Token isFirstRow={rowI === col.length - 1} box={box} />
+              <Token isFirstRow={checkIsFirstRow} box={box} />
             </DropTokenButtonProvider.Provider>
           );
         })}

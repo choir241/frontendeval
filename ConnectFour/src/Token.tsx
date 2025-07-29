@@ -11,28 +11,32 @@ export default function Token({
 }) {
   const { winner } = useContext(GameProvider);
 
-  if (isFirstRow) {
-    return (
-      <div>
-        {winner !== null ? "" : <DropTokenButton />}
-        <div
-          className={`${
-            box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
-          }`}
-        >
-          {box === 1 || box === 2 ? <div className="token"></div> : ""}
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div
-        className={`${
-          box === null ? "emptyBox" : box === 1 ? "red" : "yellow"
-        }`}
-      >
+  function toggleDropTokenButtonDisplay() {
+    if (isFirstRow) {
+      if (winner == null) {
+        return <DropTokenButton />;
+      }
+    }
+  }
+
+  function toggleTokenStyle() {
+    if (box === null) {
+      return "emptyBox";
+    }
+
+    if (box === 1) {
+      return "red";
+    } else if (box === 2) {
+      return "yellow";
+    }
+  }
+
+  return (
+    <div>
+      {toggleDropTokenButtonDisplay()}
+      <div className={toggleTokenStyle()}>
         {box === 1 || box === 2 ? <div className="token"></div> : ""}
       </div>
-    );
-  }
+    </div>
+  );
 }
