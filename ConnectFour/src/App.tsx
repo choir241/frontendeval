@@ -54,6 +54,7 @@
 import { useState, useEffect } from "react";
 import { determineWinner } from "./determineWinner";
 import Board from "./Board";
+import { GameProvider } from "./Context";
 
 declare global {
   interface Window {
@@ -136,7 +137,7 @@ window.connectFour = {
     board.forEach(
       (row: any) =>
         (hasEmptySpace =
-          hasEmptySpace || row.findIndex((cell: null) => cell === null) >= 0)
+          hasEmptySpace || row.findIndex((cell: null) => cell === null) >= 0),
     );
     if (!hasEmptySpace) {
       return "draw";
@@ -165,20 +166,20 @@ export default function App() {
   const [turn, setTurn] = useState("red");
   const [winner, setWinner] = useState<null | number | string>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     const checkForWinner = window.connectFour.checkForWinner(board);
-    
+
     if (checkForWinner) {
       setWinner(checkForWinner);
     }
-  },[board]);
+  }, [board]);
 
-  function updateTurn(turn: string){
-    setTurn(turn);
+  function updateBoard(board: null[][] | number[][]) {
+    setBoard(board);
   }
 
-  function updateBoard(board: null[][] | number[][]){
-    setBoard(board);
+  function updateTurn(turn: string) {
+    setTurn(turn);
   }
 
   return (
@@ -189,14 +190,30 @@ export default function App() {
         {!winner ? (turn === "red" ? "Red's turn" : "Yellow's turn") : ""}{" "}
       </span>
       {winner !== null ? (
-        <button className="playAgain" onClick={() => {
+        <button
+          className="playAgain"
+          onClick={() => {
             setBoard(clonedBoard);
             setWinner(null);
-          }}>Play Again</button>
+          }}
+        >
+          Play Again
+        </button>
       ) : (
         ""
       )}
-      <section className="board"><Board updateBoard = {updateBoard} turn = {turn} updateTurn = {updateTurn} board={board} winner={winner}/></section>
+      <section className="board">
+        <GameProvider.Provider
+          value={{
+            updateBoard,
+            updateTurn,
+            turn,
+            winner,
+          }}
+        >
+          <Board board={board} />
+        </GameProvider.Provider>
+      </section>
     </section>
   );
 }
