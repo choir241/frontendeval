@@ -54,7 +54,7 @@
 import { useState, useEffect } from "react";
 import { determineWinner } from "./determineWinner";
 import Board from "./Board";
-import { GameProvider } from "./Context";
+import RenderDropTokenButtons from "./RenderDropTokenButtons";
 
 declare global {
   interface Window {
@@ -201,16 +201,14 @@ export default function App() {
         ""
       )}
       <section className="board">
-        <GameProvider.Provider
-          value={{
-            updateBoard,
-            updateTurn,
-            turn,
-            winner,
-          }}
-        >
-          <Board board={board} />
-        </GameProvider.Provider>
+        <RenderDropTokenButtons
+          turn={turn}
+          updateBoard={updateBoard}
+          updateTurn={updateTurn}
+          board={board}
+          winner={winner}
+        />
+        <Board board={board} />
       </section>
     </section>
   );

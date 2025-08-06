@@ -1,11 +1,16 @@
-import { useContext } from "react";
-import { GameProvider } from "./Context";
-import { DropTokenButtonProvider } from "./Context";
-
-export default function DropTokenButton() {
-  const { turn, updateTurn, updateBoard } = useContext(GameProvider);
-  const { column, deepClone } = useContext(DropTokenButtonProvider);
-
+export default function DropTokenButton({
+  column,
+  turn,
+  updateTurn,
+  updateBoard,
+  deepClone,
+}: {
+  column: any[];
+  turn: string;
+  updateTurn: (e: string) => void;
+  updateBoard: (e: null[][] | number[][]) => void;
+  deepClone: null[][] | number[][];
+}) {
   function dropToken() {
     const isColumnFull = column.every(
       (colElement: number | null) => colElement !== null,

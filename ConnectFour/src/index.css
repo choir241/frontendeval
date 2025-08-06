@@ -141,6 +141,12 @@ table {
 
 .board {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board {
+  display: flex;
 }
 
 .game {
@@ -158,7 +164,7 @@ table {
 
 button {
   font-size: 1.5rem;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.75rem;
   width: 100%;
   cursor: pointer;
 }
@@ -207,4 +213,12 @@ body {
 
 .game span + span {
   text-transform: capitalize;
+}
+
+.buttons {
+  display: flex;
+}
+
+.boardContainer {
+  display: flex;
 }
