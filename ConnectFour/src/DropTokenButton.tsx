@@ -15,6 +15,7 @@ export default function DropTokenButton({
     const isColumnFull = column.every(
       (colElement: number | null) => colElement !== null,
     );
+    
     if (isColumnFull) {
       return;
     }

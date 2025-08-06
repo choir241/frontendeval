@@ -1,20 +1,18 @@
 export default function Token({ box }: { box: number | null }) {
-  function toggleTokenStyle() {
-    if (box === null) {
-      return "emptyBox";
-    }
+  // Use a more appropriate mapping for token styles
+  const tokenStyle = {
+    null: "emptyBox", // Use the actual `null` value as the key
+    1: "red",
+    2: "yellow"
+  };
 
-    if (box === 1) {
-      return "red";
-    } else if (box === 2) {
-      return "yellow";
-    }
-  }
+  // If box is null, default to "emptyBox"
+  const boxClass = tokenStyle[box as keyof typeof tokenStyle] || "emptyBox";
 
   return (
     <div>
-      <div className={toggleTokenStyle()}>
-        {box === 1 || box === 2 ? <div className="token"></div> : ""}
+      <div className={boxClass}>
+        <div className="token"></div>
       </div>
     </div>
   );

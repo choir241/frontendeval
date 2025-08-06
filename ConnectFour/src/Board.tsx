@@ -5,8 +5,6 @@ export default function Board({ board }: { board: null[][] | number[][] }) {
   return (
     <div className="boardContainer">
       {board.map((col: number[] | null[], colI: number) => {
-        const deepClone = window.connectFour.deepClone(board);
-        const column = deepClone[colI];
 
         return (
           <section className="column" key={colI}>
